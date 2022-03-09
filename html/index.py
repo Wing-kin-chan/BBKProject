@@ -19,7 +19,11 @@ print(
 
 <html>
   <head>
-    <title>Biocomputing II - framework</title>
+    <title>Chromosome 10 Browser</title>
+    <meta charset='utf-8'>
+    <meta name='description' content='Chromosome 10 Genome Browser for
+    Birkbeck Biocomputing II Group 8 Coursework.'>
+    <meta name='viewport' content='width=device-width,intial-scale=1'>
     <link rel='stylesheet' type='text/css' href='css/biocomp2.css' />
   </head>
   

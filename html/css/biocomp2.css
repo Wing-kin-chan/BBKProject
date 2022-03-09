@@ -1,10 +1,26 @@
-body {background: #332e2e;
+title {
+      background: #2f1b41;
       font: 12pt Helvetica,Arial,sans-serif;
-      color: #c5edee;
+      color: #f2f2f2;
+      border: none;
+      maring: 0pt;
+      padding: 0pt;
+}
+h1 {
+      background: #9f1e49;
+      font: 12pt Helvetica,Arial,sans-serif;
+      color: #f2f2f2;
+      border: none;
+      margin: 0pt;
+      padding: 0pt;
+}
+body {
+      background: #fecd51;
+      font: 12pt Helvetica,Arial,sans-serif;
+      color: #f2f2f2;
       border: none;
       margin: 0pt;
       padding: 0pt;
      }
-
 .content {padding: 1em;}
 
