@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-...Comment header goes here...
+List of Python functions with HTML wrappers to generate components of webpages for each Genbank entry as well as 
 
 Support code for generating HTML files
 """
