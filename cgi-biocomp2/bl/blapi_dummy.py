@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 """
-...Comment header goes here...
+Dummy business layer APIs
+List of function definitions to parse, and perform operations on Genbank entries from database
+and return outputs to be presented on the webpage.
 
 This is the business logic API
 """

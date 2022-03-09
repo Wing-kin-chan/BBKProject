@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 """
-...Comment header goes here...
-
-This is the database API - it needs to access the MySQL database
+This is the database API - it needs to access the MySQL database using PyMySQL 
 """
 
 # Add the directory above to the module path to import the config file
