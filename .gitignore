@@ -2,3 +2,7 @@ cgi-biocomp2/__pycache__/
 html/index.html
 config.sh
 cgi-biocomp2/config.py 
+Lib/
+Include/
+Scripts/
+pyvenv.cfg

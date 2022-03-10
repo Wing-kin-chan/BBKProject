@@ -13,11 +13,7 @@ import config
 
 print(
 """<!DOCTYPE html>
-
-<!-- A header comment goes here
--->
-
-<html>
+<html lang='en'>
   <head>
     <title>Chromosome 10 Browser</title>
     <meta charset='utf-8'>
