@@ -6,3 +6,5 @@ Lib/
 Include/
 Scripts/
 pyvenv.cfg
+chrom_CDS_10.gb
+test.py
