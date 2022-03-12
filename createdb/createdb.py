@@ -1,32 +1,29 @@
 #!/usr/bin/env python3
 #Import dependencies
-import mysql.connector
-from mysql.connector import errorcode
+import pymysql
+from pymysql import cursors
+import mysql
 
 #Database connection details:
 dbhost = 'pandora'
 dbname = 'biodb'
-port = ''
+port = 3306
 user = 'cw001'
 password = 'trp38ile'
 
-#Connect to database
-try:
-    db = mysql.connector.connect(host = dbhost,
-                            database = dbname,
-                            port = port,
-                            user = user,
-                            passwd = password
-                            )
-except mysql.connector.Error as err:
-    if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-        print("Something is wrong with your user name or password")
-    elif err.errno == errorcode.ER_BAD_DB_ERROR:
-        print("Database does not exist")
-    else:
-        print(err)
-else:
-    db.close()
+#Connect function
+def connectdb():
+    '''
+    Connects to the MySQL database
+    '''
+
+    conn = pymysql.connect(
+        host = dbhost,
+        port = port,
+        user = user,
+        password = password,
+        db = dbname,
+    )
 
 #Define tables
 tables = {}
