@@ -8,8 +8,8 @@ import mysql
 dbhost = 'pandora'
 dbname = 'biodb'
 port = 3306
-user = 'cw001'
-password = 'trp38ile'
+dbuser = 'cw001'
+dbpass = 'trp38ile'
 
 #Connect function
 def connectdb():
@@ -20,8 +20,8 @@ def connectdb():
     conn = pymysql.connect(
         host = dbhost,
         port = port,
-        user = user,
-        password = password,
+        user = dbuser,
+        password = dbpass,
         db = dbname,
     )
 
