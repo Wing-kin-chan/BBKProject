@@ -11,3 +11,11 @@ def __init__(self):
     self.locus = str()
     self.dna = str()
     self.protein = str()
+    
+import dbapi.py
+
+def gene(self):
+    self.gene = dbapi.output['gene']
+    
+def genelongname(self):
+    self.genelongname = dbapi.output['genelongname']    
