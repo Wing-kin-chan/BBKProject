@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-This is the database API - it needs to access the MySQL database using PyMySQL 
+This is the database API for querying and returning data for searches
 """
 
 # Add the directory above to the module path to import the config file
@@ -8,6 +8,19 @@ import sys
 sys.path.insert(0, "../")
 
 import config  # Import configuration information (e.g. database connection)
+
+class geneInfo:
+    '''
+    Class that will hold all information returned from the database?
+    '''
+    
+    def __init__(self):
+        self.accession = str()
+        self.gene = str()
+        self.genelongname = str()
+        self.locus = str()
+        self.dna = str()
+        self.protein = str()
 
 def getAllEntries():
     """
@@ -17,34 +30,64 @@ def getAllEntries():
     return a list of dictionaries and would access the MySQL database
     """
 
-    return(['AB000123', 'AB000321', 'AC001564'])
+    return([
+        {'GeneID': 'TP53', 'Protein': 'Tumour Protein 53', 'Accession': 'AB120004', 'Locus': '10q23'},
+        {'.Other entries with accession similar to query.'},
+        {'.Other entries with accession similar to query.'},
+    ])
 
-def getAccessions():
+def getByAccessions(accession: str):
     '''
-    Dummy function to return all accession ID's that contain the query as a substring.
-    For example, getAccessions(AB012) will return all accessions starting with AB012.
+    Dummy function to return all genes that contain the query as a substring in their accession number.
+    For example, getAccessions(AB012) will return all genes whose accession starts with with AB012.
     If output is of length = 1 calls getAccession({query})
     '''
     
-    return(['AB01234', 'AB012456', 'AB012876'])
+    return([
+        {'GeneID': 'TP53', 'Protein': 'Tumour Protein 53', 'Accession': 'AB120004', 'Locus': '10q23'},
+        {'.Other entries with accession similar to query.'},
+        {'.Other entries with accession similar to query.'},
+    ])
 
-def getAccession():
+def getAccession(accession: str):
     '''
     Dummy function that will return the database entry for the GenBank accession that matches the query.
-    For example getAccession(AB01234) will return all information on the GenBank accession AB01234.
+    For example getAccession(AB01234) will return all information on the GenBank accession AB01234. This
+    will be the function called when accessing a single entry.
     '''
     
-    return(['Accession', 'Locus', 'Molecule type', 'Gene name', 'CDS', 'Sequnece', 'Protein product?', 'Intron/Exon boundaries'])
+    return(['Accession',  'Date', 'Locus', 'Molecule type', 'GeneID', 'CDS', 'Sequnece', 'Protein product', 'Intron/Exon boundaries'])
 
-def getGeneID():
+def getByGeneID(geneID: str):
     '''
     Dummy function that will return the database entry for the ID that matches the query.
     For example getGeneID(TP53) will return all information on the TP53 gene.
     '''
     
-    return(['Accession', 'Locus', 'Molecule type', 'Gene name', 'CDS', 'Sequnece', 'Protein product?', 'Intron/Exon boundaries'])
+    return([
+        {'GeneID': 'TP53', 'Protein': 'Tumour Protein 53', 'Accession': 'AB120004', 'Locus': '10q23'},
+        {'...'},
+        {'...'},
+    ])
 
-def getLocus():
+def getByLocus(locus: str):
     '''
-    Dummy function that will
+    Dummy function that will return all gene entries (list of tuples) in a locus
     '''
+    
+    return([
+    {'GeneID': 'TP53', 'Protein': 'Tumour Protein 53', 'Accession': 'AB120004', 'Locus': '10q23'},
+    {'.Another gene in 10q23.'},
+    {'.Another gene in 10q23.'},
+])
+
+def getByProtein(protein: str):
+    '''
+    Dummy function that will return gene entries (list of tuples) related to the queried protein product 
+    '''
+    
+    return([
+    {'GeneID': 'TP53', 'Protein': 'Tumour Protein 53', 'Accession': 'AB120004', 'Locus': '10q23'},
+    {'.Other tumour proteins.'},
+    {'.Other tumour proteins.'},
+])

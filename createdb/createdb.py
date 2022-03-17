@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 #Import dependencies
+from numpy import where
 import pymysql
 from pymysql import cursors
-import mysql
 
 #Database connection details:
 dbhost = 'pandora'
@@ -11,78 +11,66 @@ port = 3306
 dbuser = 'cw001'
 dbpass = 'trp38ile'
 
-#Connect function
-def connectdb():
-    '''
-    Connects to the MySQL database
-    '''
-
-    conn = pymysql.connect(
-        host = dbhost,
-        port = port,
-        user = dbuser,
-        password = dbpass,
-        db = dbname,
-    )
-
-#Define tables
-tables = {}
-tables['genes'] = (
-    "CREATE TABLE 'genes ("
-    "'Locus' VARCHAR(12) NOT NULL,"
-    "'Definition' VARCHAR(255) NOT NULL,"
-    "'Accession' VARCHAR(12) NOT NULL,"
-    "'Keywords' VARCHAR(255) NOT NULL,"
-    "'Source' VARCHAR(60) NOT NULL,"
-    "'Organism' TEXT NOT NULL,"
-    "'Origin' LONGBLOB NOT NULL,"
-    "'CDS' LONGBLOB NOT NULL,"
-    "PRIMARY KEY ('Accession')"
+#Connection object
+connection = pymysql.connect(
+    host = dbhost,
+    port = port,
+    user = dbuser,
+    password = dbpass,
+    db = dbname,
 )
 
-cnx = mysql.connector.connect(user = user)
-cursor = cnx.cursor()
+#Cursor Object
+cursor = connection.cursor()
 
-#Create database function
-def createdb(cursor):
-    try:
-        cursor.execute(
-            "CREATE DATABASE {} DEFAULT CHARACTER SET 'utf8'".format(dbname))
-    except mysql.connector.Error as err:
-        print("Failed creating database: {}".format(err))
-        exit(1)
+#Create tables
+createGeneTable = (
+    "DROP TABLE IF EXISTS genes;"
+    "CREATE TABLE genes ("
+    "Accession VARCHAR(12) PRIMARY KEY,"
+    "Date DATE NOT NULL"
+    "Locus VARCHAR(6) NOT NULL,"
+    "GeneID VARCHAR(6) NOT NULL,"
+    "ProteinProduct VARCHAR(6) NOT NULL"
+    "Definition VARCHAR(255) NOT NULL,"
+    "Source VARCHAR(60) NOT NULL,"
+    "Origin LONGBLOB NOT NULL,"
+    "Translation LONGBLOB NOT NULL,"
+    "CDS BLOB NOT NULL,"
+    ")ENGINE = INNODB;"
+)
 
-#Initialize database
 try:
-    cursor.execute("USE {}".format(dbname))
-except mysql.connector.Error as err:
-    print("Database {} does not exist.".format(dbname))
-    if err.errno == errorcode.ER_BAD_DB_ERROR:
-        createdb(cursor)
-        print("Database {} created successfully.".format(dbname))
-        cnx.database = dbname
-    else:
-        print(err)
-        exit(1)
-
-#Create table
-for table in tables:
-    table_description = tables[table]
-    try:
-        print("Creating table {}:".format(table), end = '')
-        cursor.execute(table_description)
-    except mysql.connect.Error as err:
-        if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
-            print("Table already exists, dropping table.")
-            cursor.execute("DROP TABLE IF EXISTS {}".format(table), end = '')
-        else:
-            print(err.msg)
-    else:
-        print("Successful")
-cursor.close()
-cnx.close()
-
-#Parse the GenBank file
+    cursor.execute(createGeneTable)
+    print(f'Created Empty Gene Table')
+    cursor.close()
+except pymysql.err.Error as e:
+    print(f'Failed creating Gene Table: {e}')
+    cursor.close()
+    exit(1)
+ 
+#Import dependencies to read data data and parser
+import Bio
 from Bio import SeqIO
-fname = 'chrom_CDS_10.gb'
 
+chrom_10 = SeqIO.parse('chrom_CDS_10.gb', 'genbank')
+first = next(chrom_10)
+
+Accessions = list()
+Dates = list()
+Loci = list()
+GeneIDs = list()
+ProteinProducts = list()
+Definitions = list()
+Sources = list()
+Origins = list()
+Translations = list()
+CDSs = list()
+
+#Parse data into variable as lists
+for record in SeqIO.parse('chrom_CDS_10.gb', 'genbank'):
+    Accessions.append(record.annotations['accessions'])
+    Dates.append(record.annotaions['date'])
+    Loci.append(record.a)
+    
+[f for f in first.features if f.type == 'exon']
