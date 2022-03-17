@@ -61,7 +61,7 @@ Dates = list()
 Loci = list()
 GeneIDs = list()
 ProteinProducts = list()
-Definitions = list()
+Description = list()
 Sources = list()
 Origins = list()
 Translations = list()
@@ -70,7 +70,14 @@ CDSs = list()
 #Parse data into variable as lists
 for record in SeqIO.parse('chrom_CDS_10.gb', 'genbank'):
     Accessions.append(record.annotations['accessions'])
-    Dates.append(record.annotaions['date'])
-    Loci.append(record.a)
+    Dates.append(record.annotations['date'])
+    Loci.append([feature for feature in record.features if feature.type == 'source'][0].qualifiers['map'])
+    GeneIDs.append(record.annotations['gi'])
+    ProteinProducts.append([feature for feature in record.features if feature.type == 'CDS'][0].qualifiers['product'])
+    Description.append(record.description)
+    Sources.append(record.annotations['source'])
+    Origins.append(record.seq)
+    Translations.append(record.seq.translate())
+    CDSs.append([feature for feature in record.features if feature.type == 'exon'])
     
-[f for f in first.features if f.type == 'exon']
+[f for f in first.features if f.type == 'CDS']
