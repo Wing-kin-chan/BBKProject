@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 #Import dependencies
-from numpy import where
 import pymysql
 from pymysql import cursors
 
@@ -36,7 +35,7 @@ createGeneTable = (
     "Source VARCHAR(60) NOT NULL,"
     "Origin LONGBLOB NOT NULL,"
     "Translation LONGBLOB NOT NULL,"
-    "CDS BLOB NOT NULL,"
+    "Exons BLOB NOT NULL,"
     ")ENGINE = INNODB;"
 )
 
@@ -65,19 +64,51 @@ Description = list()
 Sources = list()
 Origins = list()
 Translations = list()
-CDSs = list()
+Exons = list()
 
 #Parse data into variable as lists
 for record in SeqIO.parse('chrom_CDS_10.gb', 'genbank'):
+    #Accessions
     Accessions.append(record.annotations['accessions'])
-    Dates.append(record.annotations['date'])
-    Loci.append([feature for feature in record.features if feature.type == 'source'][0].qualifiers['map'])
-    GeneIDs.append(record.annotations['gi'])
-    ProteinProducts.append([feature for feature in record.features if feature.type == 'CDS'][0].qualifiers['product'])
-    Description.append(record.description)
-    Sources.append(record.annotations['source'])
-    Origins.append(record.seq)
-    Translations.append(record.seq.translate())
-    CDSs.append([feature for feature in record.features if feature.type == 'exon'])
     
-[f for f in first.features if f.type == 'CDS']
+    #Dates
+    Dates.append(record.annotations['date'])
+    
+    #Loci
+    if 'map' in  [feature for feature in record.features if feature.type == 'source'][0].qualifiers.keys():
+        location = [feature for feature in record.features if feature.type == 'source'][0].qualifiers['map'][0]
+    else:
+        location = [feature for feature in record.features if feature.type == 'source'][0].qualifiers['chromosome'][0]
+    Loci.append(location)
+    
+    #GeneIDs
+    GeneIDs.append(record.annotations['gi'])
+    
+    #Protein Products
+    if 'product' in [feature for feature in record.features if feature.type == 'CDS'][0].qualifiers.keys():
+        proteinproduct = [feature for feature in record.features if feature.type == 'CDS'][0].qualifiers['product'][0]
+    else:
+        proteinproduct = ''
+    ProteinProducts.append(proteinproduct)
+    
+    #Description
+    Description.append(record.description)
+    
+    #Sources
+    Sources.append(record.annotations['source'])
+    
+    #Genomic Sequence
+    Origins.append(str(record.seq))
+    
+    #Protein sequence
+    if 'translation' in [feature for feature in record.features if feature.type == 'CDS'][0].qualifiers.keys():
+        translation = [feature for feature in record.features if feature.type == 'CDS'][0].qualifiers['translation'][0]
+    else:
+        translation = 'No Protein Product'
+    Translations.append(translation)
+    
+    #Intron/Exon Boundaries
+    Exons.append(str([feature for feature in record.features if feature.type == 'CDS'][0].location))
+    
+#Load data into SQL Server
+

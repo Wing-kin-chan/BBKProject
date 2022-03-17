@@ -82,7 +82,7 @@ def accession_number():
 		Dummy function that will pass accession number (in the chromosome file as 'ACCESSION') as string from db. This is marked as 'Genbank accession' in the requirements file. Can have zero to one result returned.
 		Returns a list of strings for search. If no result then returns message??
 	'''
-	return(dbapi.getAccession)
+	return(dbapi.getAccession())
 
 def partial_accession_query():
 	'''
