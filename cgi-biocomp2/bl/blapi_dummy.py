@@ -62,3 +62,23 @@ def getAllEntries():
     """
     return(dbapi.getAllEntries())
 
+def geneIdentifier()
+	'''
+		Dummy function that will pass name of the gene (in the chromosome file as '/gene=' as list of strings from db. This is marked as 'gene identifiers' in the requirements file. Can have zero to many result returns.
+		Returns a list of strings for FE
+	'''
+	return(dbapi.getByGeneID())
+
+
+def proteinProduct()
+	'''
+		Dummy function that will pass prot product name (in the chromosome file as '/product=' as list of strings from db. This is marked as 'protein product names' in the requirements file. Can have zero to many result returns.
+		Returns list of strings for FE
+	'''
+	return(dbapi.getByProtein())
+
+
+
+
+
+
