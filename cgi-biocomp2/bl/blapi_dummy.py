@@ -6,7 +6,7 @@ and return outputs to be presented on the webpage.
 
 This is the business logic API
 
-FIRST LAYER:
+FIRST SEARCH RESULT PAGE:
 	-def geneIdentifier(gene_name) 0...*
 		gene_name as string (list of strings) from db
 		Returns string (list of strings) for FE
@@ -23,7 +23,7 @@ FIRST LAYER:
 		takes string (list of strings) from db
 		Returns string (list of strings) for FE
 
-SECOND LAYER:
+SECOND SEARCH RESULT PAGE from links in first search result page:
 	-def nt_coding(accession_id, nt_seq[string], codon_start[int], exon_boundaries[list of int tuples])
 		Returns string of nt_seq with brackets indicating coding regions e.g. ATC{TGTGTCC}ATGTT & corresponding accession_id
 
@@ -62,7 +62,7 @@ def getAllEntries():
     """
     return(dbapi.getAllEntries())
 
-def geneIdentifier()
+def gene_identifier()
 	'''
 		Dummy function that will pass name of the gene (in the chromosome file as '/gene=' as list of strings from db. This is marked as 'gene identifiers' in the requirements file. Can have zero to many result returns.
 		Returns a list of strings for FE
@@ -70,12 +70,40 @@ def geneIdentifier()
 	return(dbapi.getByGeneID())
 
 
-def proteinProduct()
+def protein_product()
 	'''
-		Dummy function that will pass prot product name (in the chromosome file as '/product=' as list of strings from db. This is marked as 'protein product names' in the requirements file. Can have zero to many result returns.
+		Dummy function that will pass prot product name (in the chromosome file as '/product=') as list of strings from db. This is marked as 'protein product name' in the requirements file. Can have zero to many result returns.
 		Returns list of strings for FE
 	'''
 	return(dbapi.getByProtein())
+
+def accession_number()
+	'''
+		Dummy function that will pass accession number (in the chromosome file as 'ACCESSION') as string from db. This is marked as 'Genbank accession' in the requirements file. Can have zero to one result returned.
+		Returns a list of strings for search. If no result then returns message??
+	'''
+	return(dbapi.getAccession))
+
+def partial_accession_query()
+	'''
+		Dummy function that will pass accession number (in the chromosome file as 'ACCESSION') as string from db. This is marked as 'Genbank accession' in the requirements file. Can have zero to many result returns for a partial search term.
+		Returns a list of strings for search. If no result then returns message??
+	'''
+	return(dbapi.etByAccessions))
+
+def chromosomal_location()
+	'''
+		Dummy code that will pass chromosomal location as a list of strings from db. In the chromosome file as '/map=' as given by 'source'. This is marked as 'chromosomal location' in the requirements file. Can have zero to many result returns.
+		Returns list of strings for FE
+	'''
+	return(dbapi.getByLocus))
+
+
+
+
+
+
+
 
 
 
