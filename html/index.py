@@ -15,7 +15,7 @@ print(
 """<!DOCTYPE html>
 <html lang='en'>
   <head>
-    <title>Chromosome 10 Browser</title>
+    <title>Chromosome 10 Genome Browser: Homepage</title>
     <meta charset='utf-8'>
     <meta name='description' content='Chromosome 10 Genome Browser for
     Birkbeck Biocomputing II Group 8 Coursework.'>
@@ -25,6 +25,18 @@ print(
   
   <body>
     <div class='content'>
+    <header>
+    <h1 style="text-align:center;">Chromosome 10 Genome Browser</h1>
+    <p style="text-align:center;">A Chromosome 10 Genome Browser for Birkbeck Biocomputing II Group 8 Coursework</p>
+</header>
+<header id="header-background">
+  <div class="banner"></div>
+<div class="topnav">
+<a href="index.html">Homepage</a>
+<a href="geneoftheday.html">Gene of the Day</a>
+<a href="feelinglucky.html">'I'm Feeling Lucky!'</a>
+</div>
+</header>
       <h1>Biocomputing II - framework</h1>
       <p>A simple demo of how the Biocomputing II project should work and
         be submitted. It shows how the API between the layers is organized.</p>
@@ -73,6 +85,10 @@ print(
 
       </form>
     </div> <!-- content -->
+    
+    <footer>
+        <small>Copyright Wing, Tiina and Anthonia, Birkbeck 2022 &copy;<small>
+        </footer>
   </body>
 </html>
 """)
