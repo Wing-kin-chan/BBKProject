@@ -51,10 +51,16 @@ except pymysql.err.Error as e:
 #Import dependencies to read data data and parser
 import Bio
 from Bio import SeqIO
+import re
 
+#Define regex for parsing Exons
+s = re.compile(r'[0-9]+:[0-9]+') 
+
+#Import data
 chrom_10 = SeqIO.parse('chrom_CDS_10.gb', 'genbank')
 first = next(chrom_10)
 
+#Create lists for each property of gene entry
 Accessions = list()
 Dates = list()
 Loci = list()
@@ -108,7 +114,17 @@ for record in SeqIO.parse('chrom_CDS_10.gb', 'genbank'):
     Translations.append(translation)
     
     #Intron/Exon Boundaries
-    Exons.append(str([feature for feature in record.features if feature.type == 'CDS'][0].location))
+    exon_no = 0
+    e = dict()
+    exon_string = str([feature for feature in record.features if feature.type == 'CDS'][0].location)
+    if record.annotations['accessions'][0][:2] in exon_string: #If CDS feature has splice variants, returns first match entry which is longest CDS
+        exon_no += 1
+        e['Exon {}'.format(exon_no)] = s.search(exon_string).group()
+    else:
+        for match in s.finditer(exon_string):
+            exon_no += 1
+            e['Exon {}'.format(exon_no)] = match.group()
+    Exons.append(e)
     
 #Load data into SQL Server
 
