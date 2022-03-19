@@ -4,8 +4,8 @@ import pymysql
 from pymysql import cursors
 
 #Database connection details:
-dbhost = 'pandora'
 dbname = 'biodb'
+dbhost = 'pandora'
 port = 3306
 dbuser = 'cw001'
 dbpass = 'trp38ile'
@@ -33,7 +33,7 @@ createGeneTable = (
     "ProteinProduct VARCHAR(6) NOT NULL"
     "Definition VARCHAR(255) NOT NULL,"
     "Source VARCHAR(60) NOT NULL,"
-    "Origin LONGBLOB NOT NULL,"
+    "Sequence LONGBLOB NOT NULL,"
     "Translation LONGBLOB NOT NULL,"
     "Exons BLOB NOT NULL,"
     ")ENGINE = INNODB;"
@@ -68,14 +68,14 @@ GeneIDs = list()
 ProteinProducts = list()
 Description = list()
 Sources = list()
-Origins = list()
+Sequences = list()
 Translations = list()
 Exons = list()
 
 #Parse data into variable as lists
 for record in SeqIO.parse('chrom_CDS_10.gb', 'genbank'):
     #Accessions
-    Accessions.append(record.annotations['accessions'])
+    Accessions.append(record.annotations['accessions'][0])
     
     #Dates
     Dates.append(record.annotations['date'])
@@ -104,7 +104,7 @@ for record in SeqIO.parse('chrom_CDS_10.gb', 'genbank'):
     Sources.append(record.annotations['source'])
     
     #Genomic Sequence
-    Origins.append(str(record.seq))
+    Sequences.append(str(record.seq))
     
     #Protein sequence
     if 'translation' in [feature for feature in record.features if feature.type == 'CDS'][0].qualifiers.keys():
