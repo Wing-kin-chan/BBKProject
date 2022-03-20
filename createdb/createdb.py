@@ -5,7 +5,7 @@ from Bio import SeqIO
 import re
 
 #Define regex for parsing Exons
-s = re.compile(r'[0-9]+:[0-9]+') 
+s = re.compile(r'(>|<)?[0-9]+:(>|<)?[0-9]+') 
 
 #Import data
 chrom_10 = SeqIO.parse('chrom_CDS_10.gb', 'genbank')
@@ -86,7 +86,7 @@ import pymysql
 from pymysql import cursors
 
 #Database connection details:
-dbname = 'biodb'
+dbname = 'cw001'
 dbhost = 'pandora'
 port = 3306
 dbuser = 'cw001'
