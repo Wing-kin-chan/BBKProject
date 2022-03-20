@@ -56,7 +56,21 @@ def getAccession(accession: str):
     will be the function called when accessing a single entry.
     '''
     
-    return(['Accession',  'Date', 'Locus', 'Molecule type', 'GeneID', 'CDS', 'Sequnece', 'Protein product', 'Intron/Exon boundaries'])
+    return({
+        'Accession': 'AB023432',
+        'Date': '19-SEP-2005',
+        'Locus': '10q21',
+        'GeneID': '3642345',
+        'ProteinProduct': 'Angiotensin Receptor II',
+        'Description': 'Human angiotensin receptor II full CDS',
+        'Sources': 'Homo sapiens (human)',
+        'Sequence': 'atgcatgctagcgatgcgatcacgtagcgatgcttcaggtgtcggtagtcgttgagtcgtagcatgcgcgtgtagcggtagctgggtgacatcgacgagcggcgtgagcgtatcgactgaugctagcgatc',
+        'Translation': 'MTHAVTRRAHPHAILATHCTAHTERRGPQQMELIPVATR',
+        'Exons': {
+            'Exon 1':'1:30',
+            'Exon 2': '62:252'
+        }
+    })
 
 def getByGeneID(geneID: str):
     '''
@@ -65,7 +79,7 @@ def getByGeneID(geneID: str):
     '''
     
     return([
-        {'GeneID': 'TP53', 'Protein': 'Tumour Protein 53', 'Accession': 'AB120004', 'Locus': '10q23'},
+        {'GeneID': '3642345', 'Protein': 'Tumour Protein 53', 'Accession': 'AB120004', 'Locus': '10q23'},
         {'...'},
         {'...'},
     ])
@@ -76,7 +90,7 @@ def getByLocus(locus: str):
     '''
     
     return([
-    {'GeneID': 'TP53', 'Protein': 'Tumour Protein 53', 'Accession': 'AB120004', 'Locus': '10q23'},
+    {'GeneID': '3642345', 'Protein': 'Tumour Protein 53', 'Accession': 'AB120004', 'Locus': '10q23'},
     {'.Another gene in 10q23.'},
     {'.Another gene in 10q23.'},
 ])
@@ -87,7 +101,9 @@ def getByProtein(protein: str):
     '''
     
     return([
-    {'GeneID': 'TP53', 'Protein': 'Tumour Protein 53', 'Accession': 'AB120004', 'Locus': '10q23'},
+    {'GeneID': '3642345', 'Protein': 'Tumour Protein 53', 'Accession': 'AB120004', 'Locus': '10q23'},
     {'.Other tumour proteins.'},
     {'.Other tumour proteins.'},
 ])
+
+    
