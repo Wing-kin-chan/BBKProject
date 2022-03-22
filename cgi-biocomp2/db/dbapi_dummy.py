@@ -66,9 +66,9 @@ def getAccession(accession: str):
         'Sources': 'Homo sapiens (human)',
         'Sequence': 'atgcatgctagcgatgcgatcacgtagcgatgcttcaggtgtcggtagtcgttgagtcgtagcatgcgcgtgtagcggtagctgggtgacatcgacgagcggcgtgagcgtatcgactgaugctagcgatc',
         'Translation': 'MTHAVTRRAHPHAILATHCTAHTERRGPQQMELIPVATR',
-        'Exons': {
-            'Exon 1':'1:30',
-            'Exon 2': '62:252'
+        'Coding Regions': {
+            'Region 1':'1:30',
+            'Region 2': '62:252'
         }
     })
 
@@ -105,5 +105,3 @@ def getByProtein(protein: str):
     {'.Other tumour proteins.'},
     {'.Other tumour proteins.'},
 ])
-
-    

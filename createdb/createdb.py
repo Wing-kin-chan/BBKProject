@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+'''
+Code to first parse the genbank file into Python, then load onto MySQL Database.
+Written by Wing
+'''
 #Import dependencies to read data data and parser
 import Bio
 from Bio import SeqIO
@@ -158,7 +162,7 @@ i = -1 #Counter to reference accession numbers for DB Table PK
 for entry in coding_regions:
     i += 1
     for k, v in entry.items():
-        cursor.execute(load_codingtbl, (accessions[i], k, v)) #Loads coding regions (keys) and base ranges (values) into table with accession number 
+        cursor.execute(load_codingtbl, (accessions[i], k, v)) #Loads coding regions (keys) and base ranges (values) into table with accession number for PK
         cursor.commit()
 
 cursor.close()
