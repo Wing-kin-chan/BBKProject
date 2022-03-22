@@ -172,5 +172,5 @@ def getByProtein(query: str, resultslen: int):
             return getAccession(results['Accession'])
         else:
             return results
-    except: pymysql.err.Error as e:
+    except pymysql.err.Error as e:
         return 'Database error {}'.format(e)
