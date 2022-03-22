@@ -90,11 +90,11 @@ import pymysql
 from pymysql import cursors
 
 #Database connection details:
-dbname = 'biodb'
+dbname = 'cw001'
 dbhost = 'pandora'
 port = 3306
-dbuser = 'biodb_user'
-dbpass = 'biodb_p'
+dbuser = 'cw001'
+dbpass = 'trp38ile'
 
 #Connection object
 connection = pymysql.connect(
