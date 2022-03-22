@@ -24,9 +24,10 @@ connection = pymysql.connect(
 
 cursor = connection.cursor()
 
-        
-def query(querytype: str, query: str, resultlen: int):
-    optional_sql = 'Date, Description, Source, Sequence, Coding_seq, Frame, Translation, Region_No, Range'
+#To save writing repeated SQL queries of similar structure, definied a single function with arguments to query the database.
+#Each search function will parse their unique arguments to this function      
+def search(querytype: str, query: str, resultlen: int):
+    optional_sql = ', Date, Description, Source, Sequence, Coding_seq, Frame, Translation, Region_No, Range'
     sql = [
         'SELECT Accession, GeneID, Protein, Locus',
         'FROM genes g',
@@ -34,6 +35,7 @@ def query(querytype: str, query: str, resultlen: int):
         'WHERE {} LIKE %{}%'.format(querytype, query),
         'LIMIT {}'.format(resultlen)
     ]
+    #List all entries in database
     if querytype == 'getAll' and query == 'getAll':
         results = list()
         
@@ -46,6 +48,7 @@ def query(querytype: str, query: str, resultlen: int):
             results_row['Locus'] = row[3]
             results.append(results_row)
     
+    #Return list of entry summaries for search results
     if querytype in ['Accession', 'GeneID', 'Protein', 'Locus'] and resultlen > 1:
         results = list()
         
@@ -58,6 +61,7 @@ def query(querytype: str, query: str, resultlen: int):
             results_row['Locus'] = row[3]
             results.append(results_row)
     
+    #Return all information on specific entry for gene page
     if querytype in ['Accession', 'GeneID', 'Protein', 'Locus'] and resultlen == 1:
         results = dict()
         results['Coding Regions'] = dict()
@@ -89,7 +93,7 @@ def getAllEntries():
     keys(): 'Accession', 'GeneID', 'Protein', 'Locus'
     '''
     try:
-        return query('getAll', 'getAll', 0)
+        return search('getAll', 'getAll', 0)
     except pymysql.err.Error as e:
         return 'Database error {}'.format(e)
     
@@ -101,7 +105,7 @@ def getAccession(query: str):
     '''
     
     try:
-        return query('Accession', query, 1)
+        return search('Accession', query, 1)
     except pymysql.err.Error as e:
         return 'Database error {}'.format(e)
     
@@ -109,13 +113,64 @@ def getByAccession(query: str, resultslen: int):
     '''
     Returns all genes that contain the query as a substring in their accession number.
     For example, getAccessions(AB012) will return all genes whose accession starts with with AB012.
-    If output is of length = 1 calls getAccession({query})
+    If query returns unique entry, calls getAccession(result's accession) to return details for gene page.
     '''
     try:
-        results = query('Accession', query, resultslen)
+        results = search('Accession', query, resultslen)
+        if len(results) == 0:
+            return 'No results found'
         if len(results) == 1:
             return getAccession(results['Accession'])
         else:
             return results
     except pymysql.err.Error as e:
+        return 'Database error {}'.format(e)
+
+def getByGeneID(query: str, resultslen: int):
+    '''
+    Function that will return list of summary information on entries whose geneIDs are similar to query.
+    For example getGeneID(342345) will return summary information on entries with GeneID 342345 or similar.
+    If query returns unique entry, calls getAccession(result's accession) to return details for gene page.
+    '''
+    try:
+        results = search('GeneID', query, resultslen)
+        if len(results) == 0:
+            return 'No results found'
+        if len(results) == 1:
+            return getAccession(results['Accession'])
+        else:
+            return results
+    except pymysql.error.Error as e:
+        return 'Database error {}'.format(e)
+
+def getByLocus(query: str, resultslen: int):
+    '''
+    Function that will return list of summary information on entries that are within the specified locus.
+    If query returns unique entry, calls getAccession(result's accession) to return details for gene page.
+    '''
+    try:
+        results = search('Locus', query, resultslen)
+        if len(results) == 0:
+            return 'No results found'
+        if len(results) == 1:
+            return getAccession(results['Accession'])
+        else:
+            return results
+    except pymysql.err.Error as e:
+        return 'Database error {}'.format(e)
+
+def getByProtein(query: str, resultslen: int):
+    '''
+    Function that will return list of summary information on entries whose proteins descriptions are similar to the query.
+    If query returns unique entry, calls getAccession(result's accession) to return details for gene page.
+    '''
+    try:
+        results = search('Protein', query, resultslen)
+        if len(results) == 0:
+            return 'No results found'
+        if len(results) == 1:
+            return getAccession(results['Accession'])
+        else:
+            return results
+    except: pymysql.err.Error as e:
         return 'Database error {}'.format(e)
