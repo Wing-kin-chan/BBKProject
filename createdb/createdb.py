@@ -90,11 +90,11 @@ import pymysql
 from pymysql import cursors
 
 #Database connection details:
-dbname = 'cw001?local_infile=1'
+dbname = 'biodb'
 dbhost = 'pandora'
 port = 3306
-dbuser = 'cw001'
-dbpass = 'trp38ile'
+dbuser = 'biodb_user'
+dbpass = 'biodb_p'
 
 #Connection object
 connection = pymysql.connect(
@@ -110,8 +110,8 @@ cursor = connection.cursor()
 
 #Create tables
 create_tbls = '''
-DROP TABLE IF EXISTS genes;
 DROP TABLE IF EXISTS coding_regions;
+DROP TABLE IF EXISTS genes;
 
 CREATE TABLE genes(
     Accession VARCHAR(12) PRIMARY KEY,
@@ -130,7 +130,7 @@ CREATE TABLE genes(
 CREATE TABLE coding_regions(
     Accession VARCHAR(12) PRIMARY KEY,
     Region_No INT(100) NOT NULL,
-    Range VARCHAR(24) NOT NULL,
+    Base_No VARCHAR(24) NOT NULL,
     FOREIGN KEY(Accession)
         REFERENCES genes(Accession)
         ON DELETE CASCADE
