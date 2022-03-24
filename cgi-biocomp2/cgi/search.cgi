@@ -17,9 +17,13 @@ import cgi        # Import the CGI module
 import blapi      # Import the Business Logic API
 import htmlutils  # Import HTML utilities
 import config     # Import configuration information (e.g. URLs)
+cgbit.enable()
 
 form = cgi.FieldStorage()
-accession = str(form.getvalue('ac'))
+Genbank Acesssion = form.getvalue('ac')
+Gene Identifier = form.getvalue('gi)
+Protein Product = form.getvalue('protein')
+Chromosomal Location = form.getvalue('loc')
 
 #result = blapi.search(someParam from form)
 
