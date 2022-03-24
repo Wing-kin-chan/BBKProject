@@ -37,23 +37,6 @@ print(
 <a href="feelinglucky.html">'I'm Feeling Lucky!'</a>
 </div>
 </header>
-      <h1>Biocomputing II - framework</h1>
-      <p>A simple demo of how the Biocomputing II project should work and
-        be submitted. It shows how the API between the layers is organized.</p>
-      
-      <p>Most importantly, it shows how you how you are <b>strongly
-        recommended</b> to organize your code in GitHub for
-        marking. If you deviate from this, you must have a very good
-        reason!
-      </p>
-
-      <p><b>Note</b> that the Genbank accession search is guaranteed to
-         return zero or one entries; the other searches may return zero
-         to many entries. Consequently the search by Genbank accession
-         can take you to the detail page for that entry while the other
-         searches should take you to a list of hits (just as you have
-         when you list all entries).
-      </p>
       
       <p>
         <a href='""" + config.listallurl + """'>List all entries</a>
