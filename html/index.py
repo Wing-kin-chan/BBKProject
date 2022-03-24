@@ -34,7 +34,7 @@
         <a href='""" + config.listallurl + """'>List all entries</a>
       </p>
       
-      <form action="form.cgi" method='post'>
+      <form action="search.cgi" method='post'>
         <p>Search by:</p>
        
         <div align="center">
