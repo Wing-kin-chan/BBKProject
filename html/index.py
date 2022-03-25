@@ -1,3 +1,9 @@
+import sys
+sys.path.insert(0, "../cgi-biocomp2")
+import config
+
+print(
+"""
 <!DOCTYPE html>
 <html lang='en'>
   <head>
@@ -34,7 +40,7 @@
         <a href='""" + config.listallurl + """'>List all entries</a>
       </p>
       
-      <form action="search.cgi" method='post'>
+      <form action='""" + config.searchurl +"""' method='post'>
         <p>Search by:</p>
        
         <div align="center">
@@ -69,3 +75,4 @@
         </div>
   </body>
 </html>
+""")
