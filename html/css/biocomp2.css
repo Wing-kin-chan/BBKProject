@@ -63,7 +63,7 @@ p {
 .footer {
   background-color: #e5dee0;
   color:rgb(0, 0, 0)
-  border:1px solid #ccc;
+  border 1px solid #ccc;
   border-width: 1px 0;
   text-align: center;
 }
