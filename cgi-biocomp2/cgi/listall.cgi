@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 """
-...Comment header goes here...
-
 This CGI script obtains all the entries from the BL layer and formats them for 
 HTML display as a table
 """
@@ -12,14 +10,14 @@ import sys
 sys.path.insert(0, "../bl/")
 sys.path.insert(0, "../")
 
-import blapi      # Import the Business Logic API
+import blapi_real      # Import the Business Logic API
 import htmlutils  # Import HTML utilities
 import config     # Import configuration information (e.g. URLs)
 
-entries = blapi.getAllEntries()
+entries = blapi_real.getAllEntries()
 html    = htmlutils.header()
 
-html += "<h1>Demo list of all entries</h1>\n"
+html += "<h1>List of all entries</h1>\n"
 html += "  <table>\n"
 
 for entry in entries:

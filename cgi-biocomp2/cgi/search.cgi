@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 """
-...Comment header goes here...
-
 This CGI script obtains all the entries from the BL layer and formats them for 
 HTML display as a table
 """
@@ -14,7 +12,7 @@ sys.path.insert(0, "../")
 
 import cgi        # Import the CGI module
 
-import blapi      # Import the Business Logic API
+import blapi_real      # Import the Business Logic API
 import htmlutils  # Import HTML utilities
 import config     # Import configuration information (e.g. URLs)
 cgbit.enable()
@@ -25,7 +23,7 @@ Gene Identifier = form.getvalue('gi)
 Protein Product = form.getvalue('protein')
 Chromosomal Location = form.getvalue('loc')
 
-#result = blapi.search(someParam from form)
+#result = blapi_real.search
 
 html    = htmlutils.header()
 html += "<h1>Dummy search code</h1>\n"
