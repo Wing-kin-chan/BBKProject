@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 List of Python functions with HTML wrappers to generate components of webpages for each Genbank entry
 as well as information returned by blAPI functions.

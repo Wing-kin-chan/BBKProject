@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 This CGI script obtains all the entries from the BL layer and formats them for 
 HTML display as a table
