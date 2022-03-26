@@ -11,10 +11,6 @@ All URLs and database connection parameters should appear in here.
 # (where `ab123` is replaced by your username).
 cgiURL="/cgi-bin/cgiwrap/cw001"
 
-#Import dependencies
-import pymysql
-#from pymysql import cursors
-
 #Database connection details:
 dbname = 'localhost'
 dbhost = 'pandora'
@@ -22,14 +18,6 @@ port = 3306
 dbuser = 'cw001'
 dbpass = 'trp38ile'
 
-#Connection object
-connection = pymysql.connect(
-    host = dbhost,
-    port = port,
-    user = dbuser,
-    password = dbpass,
-    db = dbname,
-)
 
 
 
