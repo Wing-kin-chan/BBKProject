@@ -26,7 +26,7 @@ def footer():
     ...Function comment header goes here...
     """
     html = ""
-    html += "    </div> <!-- content -->\n"
+    html += "    </div> <small>Copyright Wing, Tiina and Anthonia, Birkbeck 2022 &copy;<small>\n"
     html += "  </body>\n"
     html += "</html>\n"
     return(html)
