@@ -30,7 +30,7 @@ def getAllEntries():
     """
     return(dbapi.getAllEntries())
 
-def getByGeneID():
+def getByGeneID(query: str, resultslen: int):
 	'''
 		Function that will pass name of the gene (in the chromosome file as '/gene=' as list of strings from db. This is marked as 'gene identifiers' in the requirements file. Can have zero to many result returns.
 		Returns a list of strings for FE
@@ -38,28 +38,28 @@ def getByGeneID():
 	return(dbapi.getByGeneID())
 
 
-def getByProtein():
+def getByProtein(query: str, resultslen: int):
 	'''
 		Function that will pass prot product name (in the chromosome file as '/product=') as list of strings from db. This is marked as 'protein product name' in the requirements file. Can have zero to many result returns.
 		Returns list of strings for FE
 	'''
-	return(dbapi.getByProtein())
+	return(dbapi.getByProduct())
 
-def getAccession():
+def getAccession(query: str):
 	'''
 		Function that will pass accession number (in the chromosome file as 'ACCESSION') as string from db. This is marked as 'Genbank accession' in the requirements file. Can have zero to one result returned.
 		Returns a list of strings for search. If no result then returns message??
 	'''
 	return(dbapi.getAccession())
 
-def getByAccession():
+def getByAccession(query: str, resultslen: int):
 	'''
 		Function that will pass accession number (in the chromosome file as 'ACCESSION') as string from db. This is marked as 'Genbank accession' in the requirements file. Can have zero to many result returns for a partial search term.
 		Returns a list of strings for search. If no result then returns message??
 	'''
 	return(dbapi.getByAccession())
 
-def getByLocus():
+def getByLocus(query: str, resultslen: int):
 	'''
 		Function that will pass chromosomal location as a list of strings from db. In the chromosome file as '/map=' as given by 'source'. This is marked as 'chromosomal location' in the requirements file. Can have zero to many result returns.
 		Returns list of strings for FE
