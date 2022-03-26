@@ -89,20 +89,18 @@ for record in SeqIO.parse('chrom_CDS_10.gb', 'genbank'):
 import pymysql
 from pymysql import cursors
 
-#Database connection details:
-dbname = 'localhost'
-dbhost = 'pandora'
-port = 3306
-dbuser = 'cw001'
-dbpass = 'trp38ile'
+import sys
+sys.path.insert(1, "cgi-biocomp2/")
+
+import config 
 
 #Connection object
 connection = pymysql.connect(
-    host = dbhost,
-    port = port,
-    user = dbuser,
-    password = dbpass,
-    db = dbname,
+    host = config.dbhost,
+    port = config.port,
+    user = config.dbuser,
+    password = config.dbpass,
+    db = config.dbname,
 )
 
 #Cursor Object
