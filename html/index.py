@@ -37,10 +37,10 @@ print(
         be submitted. It shows how the API between the layers is organized.</p>
 
       <p>
-        <a href='""" + config.listallurl + """'>List all entries</a>
+        <a href='+config.listallurl+'>List all entries</a>
       </p>
       
-      <form action='""" + config.searchurl +"""' method='post'>
+      <form action='+config.searchurl+' method='post'>
         <p>Search by:</p>
        
         <div align="center">
@@ -69,9 +69,7 @@ print(
     </div> <!-- content -->
 
     <div class="footer">
-    <footer>
-        <small>Copyright Wing, Tiina and Anthonia, Birkbeck 2022 &copy;<small>
-        </footer>
+    <footer><small>Copyright Wing, Tiina and Anthonia, Birkbeck 2022 &copy;</small></footer>
         </div>
   </body>
 </html>
