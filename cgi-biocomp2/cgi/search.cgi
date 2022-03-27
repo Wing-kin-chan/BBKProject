@@ -13,7 +13,7 @@ sys.path.insert(0, "../")
 
 import cgi        # Import the CGI module
 
-import blapi_real      # Import the Business Logic API
+import blapi      # Import the Business Logic API
 import htmlutils  # Import HTML utilities
 import config     # Import configuration information (e.g. URLs)
 cgitb.enable()
