@@ -152,6 +152,6 @@ for entry in coding_regions:
     i += 1
     for k, v in entry.items():
         cursor.execute('INSERT INTO coding_regions VALUES (%s, %s, %s)', (accessions[i], k, v)) #Loads coding regions (keys) and base ranges (values) into table with accession number for PK
-        
+
+connection.commit()   
 cursor.close()
-connection.close()

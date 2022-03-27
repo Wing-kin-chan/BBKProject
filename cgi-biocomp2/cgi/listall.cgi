@@ -22,10 +22,10 @@ html += "  <table>\n"
 
 for entry in entries:
     html += "    <tr><td>"
-    html += "<a href='" + config.searchurl + "?ac=" + entry + "'>"
-    html += "<a href='" + config.searchurl + "?gi=" + entry + "'>"
-    html += "<a href='" + config.searchurl + "?protein=" + entry + "'>"
-    html += "<a href='" + config.searchurl + "?loc=" + entry + "'>"
+    html += "<a href='" + config.searchurl + "?ac=" + entry['Accession'] + "'>"         #Added keys to call specific data from the
+    html += "<a href='" + config.searchurl + "?gi=" + entry['GeneID'] + "'>"            #entry object which is a dictionary          
+    html += "<a href='" + config.searchurl + "?protein=" + entry['Product'] + "'>"
+    html += "<a href='" + config.searchurl + "?loc=" + entry['Locus'] + "'>"
     html += entry + "</a>"
     html += "</td></tr>\n"
 
