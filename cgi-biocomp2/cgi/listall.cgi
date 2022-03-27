@@ -10,11 +10,11 @@ import sys
 sys.path.insert(0, "../bl/")
 sys.path.insert(0, "../")
 
-import blapi_real      # Import the Business Logic API
+import blapi      # Import the Business Logic API
 import htmlutils  # Import HTML utilities
 import config     # Import configuration information (e.g. URLs)
 
-entries = blapi_real.getAllEntries()
+entries = blapi.getAllEntries()
 html    = htmlutils.header()
 
 html += "<h1>List of all entries</h1>\n"

@@ -6,6 +6,7 @@ HTML display as a table
 
 # Add the bl sub-directory to the module path
 # and the directory above to import the config file
+import cgitb
 import sys
 sys.path.insert(0, "../bl/")
 sys.path.insert(0, "../")
@@ -15,11 +16,11 @@ import cgi        # Import the CGI module
 import blapi_real      # Import the Business Logic API
 import htmlutils  # Import HTML utilities
 import config     # Import configuration information (e.g. URLs)
-cgbit.enable()
+cgitb.enable()
 
 form = cgi.FieldStorage()
 Genbank Acesssion = form.getvalue('ac')
-Gene Identifier = form.getvalue('gi)
+Gene Identifier = form.getvalue('gi')
 Protein Product = form.getvalue('protein')
 Chromosomal Location = form.getvalue('loc')
 
