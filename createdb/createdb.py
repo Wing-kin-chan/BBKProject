@@ -90,7 +90,7 @@ import pymysql
 from pymysql import cursors
 
 import sys
-sys.path.insert(1, "cgi-biocomp2/")
+sys.path.insert(0, "../cgi-biocomp2")
 
 import config 
 

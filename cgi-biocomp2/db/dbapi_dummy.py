@@ -9,19 +9,6 @@ sys.path.insert(0, "../")
 
 import config  # Import configuration information (e.g. database connection)
 
-class geneInfo:
-    '''
-    Class that will hold all information returned from the database?
-    '''
-    
-    def __init__(self):
-        self.accession = str()
-        self.gene = str()
-        self.genelongname = str()
-        self.locus = str()
-        self.dna = str()
-        self.protein = str()
-
 def getAllEntries():
     """
     ...Function comment header goes here...
