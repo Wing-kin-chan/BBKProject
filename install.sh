@@ -56,7 +56,7 @@ cp -R cgi-biocomp2/* $cgi
 chmod -R a+rx $cgi/*
 
 # Install an htaccess file if needed
-if [ $htaccess == '1' ]; then
+if [[ $htaccess == "1" ]]; then
     cp htaccess $cgi/.htaccess
     cp htaccess $cgi/cgi/.htaccess
 fi
