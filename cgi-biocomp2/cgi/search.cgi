@@ -28,7 +28,7 @@ ChromosomalLocation = form.getvalue('loc')
 html    = htmlutils.header()
 html += "<h1>Dummy search code</h1>\n"
 html += "      <ul>\n"
-html += "        <li>Result of search for '" + Genbank Accession + "'</li>\n"
+html += "        <li>Result of search for '" + Genbank #Accession + "'</li>\n"
 html += "      </ul>\n"
 html += htmlutils.footer()
 
