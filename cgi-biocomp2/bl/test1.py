@@ -16,4 +16,4 @@ new_file = "../bl/AB032150_getAccession.txt"
 
 with open(new_file, 'w') as f:
 	tt = db.getAccession('AB032150')
-	f.write(tt)
+	f.write(str(tt))
