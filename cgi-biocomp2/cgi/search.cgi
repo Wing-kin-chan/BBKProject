@@ -19,7 +19,7 @@ import config     # Import configuration information (e.g. URLs)
 cgitb.enable()
 
 form = cgi.FieldStorage()
-GenbankAcesssion = form.getvalue('ac')
+GenbankAccession = form.getvalue('ac')
 GeneIdentifier = form.getvalue('gi')
 ProteinProduct = form.getvalue('protein')
 ChromosomalLocation = form.getvalue('loc')
