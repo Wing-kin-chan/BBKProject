@@ -18,17 +18,17 @@ import config     # Import configuration information (e.g. URLs)
 cgbit.enable()
 
 form = cgi.FieldStorage()
-Genbank Acesssion = form.getvalue('ac')
-Gene Identifier = form.getvalue('gi)
-Protein Product = form.getvalue('protein')
-Chromosomal Location = form.getvalue('loc')
+GenbankAcesssion = form.getvalue('ac')
+GeneIdentifier = form.getvalue('gi')
+ProteinProduct = form.getvalue('protein')
+ChromosomalLocation = form.getvalue('loc')
 
 #result = blapi_real.search
 
 html    = htmlutils.header()
 html += "<h1>Dummy search code</h1>\n"
 html += "      <ul>\n"
-html += "        <li>Result of search for '" + accession + "'</li>\n"
+html += "        <li>Result of search for '" + Genbank Accession + "'</li>\n"
 html += "      </ul>\n"
 html += htmlutils.footer()
 
