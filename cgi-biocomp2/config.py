@@ -12,8 +12,8 @@ All URLs and database connection parameters should appear in here.
 cgiURL="/cgi-bin/cgiwrap/cw001"
 
 #Database connection details:
-dbname = 'localhost'
-dbhost = 'pandora'
+dbname = 'cw001'
+dbhost = 'localhost'
 port = 3306
 dbuser = 'cw001'
 dbpass = 'trp38ile'
