@@ -174,3 +174,13 @@ def getByProduct(query: str, resultslen: int):
             return results
     except pymysql.err.Error as e:
         return 'Database error {}'.format(e)
+
+def updateCodingSeq(Accession: str, CodingSeq: str):
+    '''
+    Function that stores the coding sequence as calculated by the business layer API, in the database
+    '''
+    cursor = connection.cursor()
+    sql_updateCDS = '''UPDATE genes SET Coding_seq = '{}' WHERE Accession = '{}' '''.format(Accession, CodingSeq)
+    cursor.execute(sql_updateCDS)
+    connection.commit()
+    cursor.close()
