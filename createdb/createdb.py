@@ -123,21 +123,33 @@ for k, v in create_db.items():
         print(f'{k} Failed: {e}')
         exit(1)
     else:
-        print("OK")
+        print('OK')
         connection.commit()
 cursor.close()
         
 #Load data into SQL Server
 cursor = connection.cursor()
-for i in range(0, 861):
-    cursor.execute('INSERT INTO genes VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
-                  (accessions[i], dates[i], loci[i], geneIDs[i], protein_products[i], descriptions[i], sources[i], sequences[i], reading_frames[i], translations[i], None))
-
+try:
+    for i in range(0, 861):
+        cursor.execute('INSERT INTO genes VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+                    (accessions[i], dates[i], loci[i], geneIDs[i], protein_products[i], descriptions[i], sources[i], sequences[i], reading_frames[i], translations[i], None))
+    print('Populating genes table', end = '')
+except pymysql.err.Error as e:
+    print(f'Failed: {e}')
+else:
+    print('OK')
+    
 i = -1 #Counter to reference accession numbers for DB Table PK
-for entry in coding_regions:
-    i += 1
-    for k, v in entry.items():
-        cursor.execute('INSERT INTO coding_regions VALUES (%s, %s, %s)', (accessions[i], k, v)) #Loads coding regions (keys) and base ranges (values) into table with accession number for PK
-
+try:
+    for entry in coding_regions:
+        i += 1
+        for k, v in entry.items():
+            cursor.execute('INSERT INTO coding_regions VALUES (%s, %s, %s)', (accessions[i], k, v)) #Loads coding regions (keys) and base ranges (values) into table with accession number for PK
+    print('Populating coding regions table')
+except pymysql.err.Error as e:
+    print(f'Failed: {e}')
+else:
+    print('OK')
+    
 connection.commit()   
 cursor.close()
