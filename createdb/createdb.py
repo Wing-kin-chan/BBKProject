@@ -133,7 +133,7 @@ try:
     for i in range(0, 861):
         cursor.execute('INSERT INTO genes VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
                     (accessions[i], dates[i], loci[i], geneIDs[i], protein_products[i], descriptions[i], sources[i], sequences[i], reading_frames[i], translations[i], None))
-    print('Populating genes table', end = '')
+    print('Populating genes table: ', end = '')
 except pymysql.err.Error as e:
     print(f'Failed: {e}')
 else:
@@ -145,7 +145,7 @@ try:
         i += 1
         for k, v in entry.items():
             cursor.execute('INSERT INTO coding_regions VALUES (%s, %s, %s)', (accessions[i], k, v)) #Loads coding regions (keys) and base ranges (values) into table with accession number for PK
-    print('Populating coding regions table')
+    print('Populating coding regions table: ', end = '')
 except pymysql.err.Error as e:
     print(f'Failed: {e}')
 else:
