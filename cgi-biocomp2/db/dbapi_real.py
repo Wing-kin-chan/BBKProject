@@ -80,8 +80,8 @@ def search(querytype: str, query: str, resultlen: int):
             results['Sequence'] = row[7]
             results['Frame'] = row[8]
             results['Translation'] = row[9]
-            results['Coding Regions'][row[11]] = row[12]
-            results['Coding Sequence'] = row[13]
+            results['Coding Sequence'] = row[10]
+            results['Coding Regions'][row[12]] = row[13]            
     
     cursor.close()
     
