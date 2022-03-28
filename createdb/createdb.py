@@ -130,8 +130,8 @@ cursor.close()
 #Load data into SQL Server
 cursor = connection.cursor()
 for i in range(0, 861):
-    cursor.execute('INSERT INTO genes VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) SET Coding_seq = NULL',
-                  (accessions[i], dates[i], loci[i], geneIDs[i], protein_products[i], descriptions[i], sources[i], sequences[i], reading_frames[i], translations[i]))
+    cursor.execute('INSERT INTO genes VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+                  (accessions[i], dates[i], loci[i], geneIDs[i], protein_products[i], descriptions[i], sources[i], sequences[i], reading_frames[i], translations[i], None))
 
 i = -1 #Counter to reference accession numbers for DB Table PK
 for entry in coding_regions:
