@@ -81,6 +81,7 @@ def search(querytype: str, query: str, resultlen: int):
             results['Frame'] = row[8]
             results['Translation'] = row[9]
             results['Coding Regions'][row[11]] = row[12]
+            results['Coding Sequence'] = row[13]
     
     cursor.close()
     

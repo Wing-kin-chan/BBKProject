@@ -107,40 +107,24 @@ connection = pymysql.connect(
 cursor = connection.cursor()
 
 #Create tables
-create_tbls = ('''
-DROP TABLE IF EXISTS coding_regions;
-DROP TABLE IF EXISTS genes;
+create_db = dict()
+create_db['drop coding table'] = 'DROP TABLE IF EXISTS coding_regions;'
+create_db['drop gene table'] = 'DROP TABLE IF EXISTS genes;'
+create_db['gene_tbl'] = 'CREATE TABLE genes(Accession VARCHAR(12) PRIMARY KEY, Date DATE NOT NULL, Locus VARCHAR(40) NOT NULL, GeneID VARCHAR(8) NOT NULL, Product VARCHAR(255) NOT NULL, Description VARCHAR(255) NOT NULL, Source VARCHAR(60) NOT NULL, Sequence LONGBLOB NOT NULL, Frame INT(1) NOT NULL, Translation LONGBLOB NOT NULL, CD_seq LONGBLOB);'
+create_db['coding_tbl'] = 'CREATE TABLE coding_regions(Accession VARCHAR(12), Region_No VARCHAR(8), Bases VARCHAR(24), FOREIGN KEY(Accession) REFERENCES genes(Accession) ON DELETE CASCADE);'
 
-CREATE TABLE genes(
-    Accession VARCHAR(12) PRIMARY KEY,
-    Date DATE NOT NULL,
-    Locus VARCHAR(40) NOT NULL,
-    GeneID VARCHAR(8) NOT NULL,
-    Product VARCHAR(255) NOT NULL,
-    Description VARCHAR(255) NOT NULL,
-    Source VARCHAR(60) NOT NULL,
-    Sequence LONGBLOB NOT NULL,
-    Frame INT(1) NOT NULL,
-    Translation LONGBLOB NOT NULL 
-)ENGINE = InnoDB;
-
-CREATE TABLE coding_regions(
-    Accession VARCHAR(12) NOT NULL,
-    Region_No VARCHAR(8) NOT NULL,
-    Bases VARCHAR(24) NOT NULL,
-    FOREIGN KEY(Accession)
-        REFERENCES genes(Accession)
-        ON DELETE CASCADE
-)Engine = InnoDB;
-''')
-
-try:
-    cursor.execute(create_tbls)
-    print('Successfully created tables')
-except pymysql.err.Error as e:
-    print(f'Failed creating tables: {e}')
-    exit(1)
-    
+for k, v in create_db.items():
+    try:
+        print('Executing {}: '.format(k), end = '')
+        cursor.execute(v)
+    except pymysql.err.Error as e:
+        print(f'{k} Failed: {e}')
+        exit(1)
+    else:
+        print("OK")
+        connection.commit()
+cursor.close()
+        
 #Load data into SQL Server
 cursor = connection.cursor()
 for i in range(0, 861):
