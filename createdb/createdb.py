@@ -109,7 +109,7 @@ cursor = connection.cursor()
 #Create tables
 create_db = dict()
 create_db['drop gene table'] = 'DROP TABLE IF EXISTS genes;'
-create_db['gene_tbl'] = 'CREATE TABLE genes(Accession VARCHAR(12) PRIMARY KEY, Date DATE NOT NULL, Locus VARCHAR(40) NOT NULL, GeneID VARCHAR(8) NOT NULL, Product VARCHAR(255) NOT NULL, Description VARCHAR(255) NOT NULL, Source VARCHAR(60) NOT NULL, Sequence LONGBLOB NOT NULL, Frame INT(1) NOT NULL, Translation LONGBLOB NOT NULL, Coding_seq LONGBLOB, Coding_regions NOT NULL);'
+create_db['gene_tbl'] = 'CREATE TABLE genes(Accession VARCHAR(12) PRIMARY KEY, Date DATE NOT NULL, Locus VARCHAR(40) NOT NULL, GeneID VARCHAR(8) NOT NULL, Product VARCHAR(255) NOT NULL, Description VARCHAR(255) NOT NULL, Source VARCHAR(60) NOT NULL, Sequence LONGBLOB NOT NULL, Frame INT(1) NOT NULL, Translation LONGBLOB NOT NULL, Coding_seq LONGBLOB, Coding_regions BLOB NOT NULL);'
 
 for k, v in create_db.items():
     try:
