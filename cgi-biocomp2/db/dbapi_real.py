@@ -13,6 +13,7 @@ import config  # Import configuration information (e.g. database connection)
 #Import dependencies
 import pymysql
 from pymysql import cursors
+import json
 
 connection = pymysql.connect(
     host = config.dbhost,
@@ -30,9 +31,8 @@ def search(querytype: str, query: str, resultlen: int):
     cursor = connection.cursor()
     sql_selectall = 'SELECT * '
     sql_selectsummary = 'SELECT Accession, GeneID, Product, Locus '
-    sql_location = 'FROM genes g '
-    sql_join = 'JOIN coding_regions c ON(g.Accession = c.Accession) '
-    sql_where = '''WHERE g.{} LIKE '%{}%' '''.format(querytype, query)
+    sql_location = 'FROM genes '
+    sql_where = '''WHERE {} LIKE '%{}%' '''.format(querytype, query)
     sql_limit = 'LIMIT {};'.format(resultlen)
     
     #List all entry summaries in database
@@ -65,13 +65,13 @@ def search(querytype: str, query: str, resultlen: int):
     
     #Return all information on specific entry for gene page
     if querytype in ['Accession', 'GeneID', 'Product', 'Locus'] and resultlen == 1:
-        sql = sql_selectall + sql_location + sql_join + sql_where + ';'
+        sql = sql_selectall + sql_location + sql_where + ';'
         results = dict()
-        results['Coding Regions'] = dict()
         
         cursor.execute(sql)
         for row in cursor.fetchall():
             results['Accession'] = row[0]
+            results['Dates'] = row[1]
             results['Locus'] = row[2]
             results['GeneID'] = row[3]
             results['Product'] = row[4]
@@ -81,7 +81,7 @@ def search(querytype: str, query: str, resultlen: int):
             results['Frame'] = row[8]
             results['Translation'] = row[9]
             results['Coding Sequence'] = row[10]
-            results['Coding Regions'][row[12]] = row[13]            
+            results['Coding Regions'] = json.loads(row[11])          
     
     cursor.close()
     
