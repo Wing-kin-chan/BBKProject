@@ -141,7 +141,7 @@ try:
                      reading_frames[i], 
                      translations[i], 
                      None, 
-                     json.dump(coding_regions[i])
+                     json.dumps(coding_regions[i])
                      )
                     )
     print('Populating genes table: ', end = '')
