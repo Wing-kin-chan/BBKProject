@@ -34,8 +34,7 @@ for record in SeqIO.parse('chrom_CDS_10.gb', 'genbank'):
     accessions.append(record.annotations['accessions'][0])
     
     #Dates
-    sql_date = datetime.strptime(record.annotations['date'], '%d-%b-%Y').strftime('%Y-%m-%d')
-    dates.append(sql_date)
+    dates.append(datetime.strptime(record.annotations['date'], '%d-%b-%Y').strftime('%Y-%m-%d'))
     
     #Loci
     if 'map' in  [feature for feature in record.features if feature.type == 'source'][0].qualifiers.keys():
