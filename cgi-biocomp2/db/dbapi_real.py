@@ -71,7 +71,7 @@ def search(querytype: str, query: str, resultlen: int):
         cursor.execute(sql)
         for row in cursor.fetchall():
             results['Accession'] = row[0]
-            results['Dates'] = row[1]
+            results['Date'] = row[1]
             results['Locus'] = row[2]
             results['GeneID'] = row[3]
             results['Product'] = row[4]
