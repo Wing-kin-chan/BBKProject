@@ -7,13 +7,13 @@ Written by Wing
 import Bio
 from Bio import SeqIO
 import re
+from datetime import datetime
 
 #Define regex for parsing Exons
 s = re.compile(r'(>|<)?[0-9]+:(>|<)?[0-9]+') 
 
 #Import data
 chrom_10 = SeqIO.parse('chrom_CDS_10.gb', 'genbank')
-first = next(chrom_10)
 
 #Create lists for each property of gene entry
 accessions = list()
@@ -34,7 +34,7 @@ for record in SeqIO.parse('chrom_CDS_10.gb', 'genbank'):
     accessions.append(record.annotations['accessions'][0])
     
     #Dates
-    dates.append(record.annotations['date'])
+    dates.append(datetime.strptime(record.annotations['date'], '%d-%b-%Y').strftime('%Y-%m-%d'))
     
     #Loci
     if 'map' in  [feature for feature in record.features if feature.type == 'source'][0].qualifiers.keys():
@@ -62,7 +62,7 @@ for record in SeqIO.parse('chrom_CDS_10.gb', 'genbank'):
     #Genomic Sequence
     sequences.append(str(record.seq))
     
-    #Codon Start
+    #Reading frame
     reading_frames.append([feature for feature in record.features if feature.type == 'CDS'][0].qualifiers['codon_start'][0])
     
     #Protein sequence
@@ -149,18 +149,6 @@ except pymysql.err.Error as e:
     print(f'Failed: {e}')
 else:
     print('OK')
-'''  
-i = -1 #Counter to reference accession numbers for DB Table PK
-try:
-    for entry in coding_regions:
-        i += 1
-        for k, v in entry.items():
-            cursor.execute('INSERT INTO coding_regions VALUES (%s, %s, %s)', (accessions[i], k, v)) #Loads coding regions (keys) and base ranges (values) into table with accession number for PK
-    print('Populating coding regions table: ', end = '')
-except pymysql.err.Error as e:
-    print(f'Failed: {e}')
-else:
-    print('OK')
-'''    
+
 connection.commit()   
 cursor.close()
