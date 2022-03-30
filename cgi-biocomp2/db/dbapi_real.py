@@ -82,7 +82,7 @@ def search(querytype: str, query: str, resultlen: int):
             results['Translation'] = row[9]
             results['Coding Sequence'] = row[10]
             results['Coding Regions'] = json.loads(row[11])
-            results['Reverse Complement'] = row(12)      
+            results['Reverse Complement'] = row[12]      
     
     cursor.close()
     
