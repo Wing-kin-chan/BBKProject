@@ -81,7 +81,8 @@ def search(querytype: str, query: str, resultlen: int):
             results['Frame'] = row[8]
             results['Translation'] = row[9]
             results['Coding Sequence'] = row[10]
-            results['Coding Regions'] = json.loads(row[11])          
+            results['Coding Regions'] = json.loads(row[11])
+            results['Reverse Complement'] = row(12)      
     
     cursor.close()
     
@@ -180,8 +181,18 @@ def updateCodingSeq(Accession: str, CodingSeq: str):
     Function that stores the coding sequence as calculated by the business layer API, in the database
     '''
     cursor = connection.cursor()
-    sql_updateCDS = '''UPDATE genes SET Coding_seq = '{}' WHERE Accession = '{}' '''.format(Accession, CodingSeq)
+    sql_updateCDS = '''UPDATE genes SET Coding_seq = '{}' WHERE Accession = '{}'; '''.format(CodingSeq, Accession)
     cursor.execute(sql_updateCDS)
+    connection.commit()
+    cursor.close()
+
+def updateComplement(Accession: str, Complement: str):
+    '''
+    Function that stores the complement coding sequences as calculated by the business layer API, in the database
+    '''
+    cursor = connection.cursor()
+    sql_updateComp = '''UPDATE genes SET Complement = '{}' WHERE Accession = '{}'; '''.format(Complement, Accession)
+    cursor.execute(sql_updateComp)
     connection.commit()
     cursor.close()
 

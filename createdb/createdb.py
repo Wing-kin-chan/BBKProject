@@ -109,7 +109,7 @@ cursor = connection.cursor()
 #Create tables
 create_db = dict()
 create_db['drop gene table'] = 'DROP TABLE IF EXISTS genes;'
-create_db['gene_tbl'] = 'CREATE TABLE genes(Accession VARCHAR(12) PRIMARY KEY, Date DATE NOT NULL, Locus VARCHAR(40) NOT NULL, GeneID VARCHAR(8) NOT NULL, Product VARCHAR(255) NOT NULL, Description VARCHAR(255) NOT NULL, Source VARCHAR(60) NOT NULL, Sequence LONGBLOB NOT NULL, Frame INT(1) NOT NULL, Translation LONGBLOB NOT NULL, Coding_seq LONGBLOB, Coding_regions BLOB NOT NULL);'
+create_db['gene_tbl'] = 'CREATE TABLE genes(Accession VARCHAR(12) PRIMARY KEY, Date DATE NOT NULL, Locus VARCHAR(40) NOT NULL, GeneID VARCHAR(8) NOT NULL, Product VARCHAR(255) NOT NULL, Description VARCHAR(255) NOT NULL, Source VARCHAR(60) NOT NULL, Sequence LONGBLOB NOT NULL, Frame INT(1) NOT NULL, Translation LONGBLOB NOT NULL, Coding_seq LONGBLOB, Coding_regions BLOB NOT NULL, Complement LONGBLOB);'
 
 for k, v in create_db.items():
     try:
@@ -129,7 +129,7 @@ import json
 cursor = connection.cursor()
 try:
     for i in range(0, 861):
-        cursor.execute('INSERT INTO genes VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+        cursor.execute('INSERT INTO genes VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
                     (accessions[i], 
                      dates[i], 
                      loci[i], 
@@ -141,7 +141,8 @@ try:
                      reading_frames[i], 
                      translations[i], 
                      None, 
-                     json.dumps(coding_regions[i])
+                     json.dumps(coding_regions[i]),
+                     None
                      )
                     )
     print('Populating genes table: ', end = '')
