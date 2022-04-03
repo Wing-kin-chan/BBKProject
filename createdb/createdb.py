@@ -7,13 +7,13 @@ Written by Wing
 import Bio
 from Bio import SeqIO
 import re
+from datetime import datetime
 
 #Define regex for parsing Exons
 s = re.compile(r'(>|<)?[0-9]+:(>|<)?[0-9]+') 
 
 #Import data
 chrom_10 = SeqIO.parse('chrom_CDS_10.gb', 'genbank')
-first = next(chrom_10)
 
 #Create lists for each property of gene entry
 accessions = list()
@@ -34,7 +34,7 @@ for record in SeqIO.parse('chrom_CDS_10.gb', 'genbank'):
     accessions.append(record.annotations['accessions'][0])
     
     #Dates
-    dates.append(record.annotations['date'])
+    dates.append(datetime.strptime(record.annotations['date'], '%d-%b-%Y').strftime('%Y-%m-%d'))
     
     #Loci
     if 'map' in  [feature for feature in record.features if feature.type == 'source'][0].qualifiers.keys():
@@ -62,7 +62,7 @@ for record in SeqIO.parse('chrom_CDS_10.gb', 'genbank'):
     #Genomic Sequence
     sequences.append(str(record.seq))
     
-    #Codon Start
+    #Reading frame
     reading_frames.append([feature for feature in record.features if feature.type == 'CDS'][0].qualifiers['codon_start'][0])
     
     #Protein sequence
@@ -107,51 +107,49 @@ connection = pymysql.connect(
 cursor = connection.cursor()
 
 #Create tables
-create_tbls = ('''
-DROP TABLE IF EXISTS coding_regions;
-DROP TABLE IF EXISTS genes;
+create_db = dict()
+create_db['drop gene table'] = 'DROP TABLE IF EXISTS genes;'
+create_db['gene_tbl'] = 'CREATE TABLE genes(Accession VARCHAR(12) PRIMARY KEY, Date DATE NOT NULL, Locus VARCHAR(40) NOT NULL, GeneID VARCHAR(8) NOT NULL, Product VARCHAR(255) NOT NULL, Description VARCHAR(255) NOT NULL, Source VARCHAR(60) NOT NULL, Sequence LONGBLOB NOT NULL, Frame INT(1) NOT NULL, Translation LONGBLOB NOT NULL, Coding_seq LONGBLOB, Coding_regions BLOB NOT NULL, Complement LONGBLOB);'
 
-CREATE TABLE genes(
-    Accession VARCHAR(12) PRIMARY KEY,
-    Date DATE NOT NULL,
-    Locus VARCHAR(40) NOT NULL,
-    GeneID VARCHAR(8) NOT NULL,
-    Product VARCHAR(255) NOT NULL,
-    Description VARCHAR(255) NOT NULL,
-    Source VARCHAR(60) NOT NULL,
-    Sequence LONGBLOB NOT NULL,
-    Frame INT(1) NOT NULL,
-    Translation LONGBLOB NOT NULL 
-)ENGINE = InnoDB;
-
-CREATE TABLE coding_regions(
-    Accession VARCHAR(12) NOT NULL,
-    Region_No VARCHAR(8) NOT NULL,
-    Bases VARCHAR(24) NOT NULL,
-    FOREIGN KEY(Accession)
-        REFERENCES genes(Accession)
-        ON DELETE CASCADE
-)Engine = InnoDB;
-''')
-
-try:
-    cursor.execute(create_tbls)
-    print('Successfully created tables')
-except pymysql.err.Error as e:
-    print(f'Failed creating tables: {e}')
-    exit(1)
-    
+for k, v in create_db.items():
+    try:
+        print('Executing {}: '.format(k), end = '')
+        cursor.execute(v)
+    except pymysql.err.Error as e:
+        print(f'{k} Failed: {e}')
+        exit(1)
+    else:
+        print('OK')
+        connection.commit()
+cursor.close()
+        
 #Load data into SQL Server
-cursor = connection.cursor()
-for i in range(0, 861):
-    cursor.execute('INSERT INTO genes VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
-                  (accessions[i], dates[i], loci[i], geneIDs[i], protein_products[i], descriptions[i], sources[i], sequences[i], reading_frames[i], translations[i]))
+import json
 
-i = -1 #Counter to reference accession numbers for DB Table PK
-for entry in coding_regions:
-    i += 1
-    for k, v in entry.items():
-        cursor.execute('INSERT INTO coding_regions VALUES (%s, %s, %s)', (accessions[i], k, v)) #Loads coding regions (keys) and base ranges (values) into table with accession number for PK
+cursor = connection.cursor()
+try:
+    for i in range(0, 861):
+        cursor.execute('INSERT INTO genes VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+                    (accessions[i], 
+                     dates[i], 
+                     loci[i], 
+                     geneIDs[i], 
+                     protein_products[i], 
+                     descriptions[i], 
+                     sources[i], 
+                     sequences[i], 
+                     reading_frames[i], 
+                     translations[i], 
+                     None, 
+                     json.dumps(coding_regions[i]),
+                     None
+                     )
+                    )
+    print('Populating genes table: ', end = '')
+except pymysql.err.Error as e:
+    print(f'Failed: {e}')
+else:
+    print('OK')
 
 connection.commit()   
 cursor.close()

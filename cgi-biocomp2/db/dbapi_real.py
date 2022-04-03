@@ -13,6 +13,7 @@ import config  # Import configuration information (e.g. database connection)
 #Import dependencies
 import pymysql
 from pymysql import cursors
+import json
 
 connection = pymysql.connect(
     host = config.dbhost,
@@ -30,9 +31,8 @@ def search(querytype: str, query: str, resultlen: int):
     cursor = connection.cursor()
     sql_selectall = 'SELECT * '
     sql_selectsummary = 'SELECT Accession, GeneID, Product, Locus '
-    sql_location = 'FROM genes g '
-    sql_join = 'JOIN coding_regions c ON(g.Accession = c.Accession) '
-    sql_where = '''WHERE g.{} LIKE '%{}%' '''.format(querytype, query)
+    sql_location = 'FROM genes '
+    sql_where = '''WHERE {} LIKE '%{}%' '''.format(querytype, query)
     sql_limit = 'LIMIT {};'.format(resultlen)
     
     #List all entry summaries in database
@@ -65,13 +65,13 @@ def search(querytype: str, query: str, resultlen: int):
     
     #Return all information on specific entry for gene page
     if querytype in ['Accession', 'GeneID', 'Product', 'Locus'] and resultlen == 1:
-        sql = sql_selectall + sql_location + sql_join + sql_where + ';'
+        sql = sql_selectall + sql_location + sql_where + ';'
         results = dict()
-        results['Coding Regions'] = dict()
         
         cursor.execute(sql)
         for row in cursor.fetchall():
             results['Accession'] = row[0]
+            results['Date'] = str(row[1])
             results['Locus'] = row[2]
             results['GeneID'] = row[3]
             results['Product'] = row[4]
@@ -80,7 +80,9 @@ def search(querytype: str, query: str, resultlen: int):
             results['Sequence'] = row[7]
             results['Frame'] = row[8]
             results['Translation'] = row[9]
-            results['Coding Regions'][row[11]] = row[12]
+            results['Coding Sequence'] = row[10]
+            results['Coding Regions'] = json.loads(row[11])
+            results['Reverse Complement'] = row[12]      
     
     cursor.close()
     
@@ -173,3 +175,44 @@ def getByProduct(query: str, resultslen: int):
             return results
     except pymysql.err.Error as e:
         return 'Database error {}'.format(e)
+
+def updateCodingSeq(Accession: str, CodingSeq: str):
+    '''
+    Function that stores the coding sequence as calculated by the business layer API, in the database
+    '''
+    cursor = connection.cursor()
+    sql_updateCDS = '''UPDATE genes SET Coding_seq = '{}' WHERE Accession = '{}'; '''.format(CodingSeq, Accession)
+    cursor.execute(sql_updateCDS)
+    connection.commit()
+    cursor.close()
+
+def updateComplement(Accession: str, Complement: str):
+    '''
+    Function that stores the complement coding sequences as calculated by the business layer API, in the database
+    '''
+    cursor = connection.cursor()
+    sql_updateComp = '''UPDATE genes SET Complement = '{}' WHERE Accession = '{}'; '''.format(Complement, Accession)
+    cursor.execute(sql_updateComp)
+    connection.commit()
+    cursor.close()
+
+def getAllCodingRegions():
+    '''
+    Function that returns all sequences and coding region boundaries as list of dictionaries for the blAPI 
+    to calculate total codon usage in the database.
+    '''
+    cursor = connection.cursor()
+    sql_AllSequences = 'SELECT g.Accession, g.Sequence, c.Region, c.Bases FROM genes g JOIN coding_regions c ON(g.Accession = c.Accession)'
+    all_coding_regions = list()
+    
+    cursor.execute(sql_AllSequences)
+    for row in cursor.fetchall():
+        results_row = dict()
+        results_row['Coding Regions'] = dict()
+        results_row['Accession'] = row[1]
+        results_row['Sequence'] = row[2]
+        results_row['Coding Regions'][row[3]] = row[4]
+        all_coding_regions.append(results_row)
+    
+    cursor.close() 
+    return all_coding_regions
