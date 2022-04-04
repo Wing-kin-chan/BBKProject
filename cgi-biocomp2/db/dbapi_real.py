@@ -202,7 +202,7 @@ def getAllCodingRegions():
     to calculate total codon usage in the database.
     '''
     cursor = connection.cursor()
-    sql_AllSequences = 'SELECT Accession, Sequence, Frame, Coding_Regions FROM genes, Complement;'
+    sql_AllSequences = 'SELECT Accession, Sequence, Frame, Coding_Regions, Complement FROM genes;'
     all_coding_regions = list()
     
     cursor.execute(sql_AllSequences)
