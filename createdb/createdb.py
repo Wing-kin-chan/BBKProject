@@ -4,16 +4,9 @@ Code to first parse the genbank file into Python, then load onto MySQL Database.
 Written by Wing
 '''
 #Import dependencies to read data data and parser
-import Bio
 from Bio import SeqIO
 import re
 from datetime import datetime
-
-#Define regex for parsing Exons
-s = re.compile(r'(>|<)?[0-9]+:(>|<)?[0-9]+') 
-
-#Import data
-chrom_10 = SeqIO.parse('chrom_CDS_10.gb', 'genbank')
 
 #Create lists for each property of gene entry
 accessions = list()
@@ -27,63 +20,72 @@ sequences = list()
 translations = list()
 coding_regions = list()
 reading_frames = list()
+complement = list()
+partial_CDS_records = 0
+overlapping_records = 0
 
-#Parse data into variable as lists
+#Define regex for parsing coding regions
+cds_search = re.compile(r'[0-9]+:[0-9]+') 
+partial_search = re.compile(r'(>|<)[0-9]+')
+ext_join_search = re.compile(r'[A-Z]{1,}[0-9]+')
+
+#Import and parse data into variable as lists
 for record in SeqIO.parse('chrom_CDS_10.gb', 'genbank'):
-    #Accessions
-    accessions.append(record.annotations['accessions'][0])
-    
-    #Dates
-    dates.append(datetime.strptime(record.annotations['date'], '%d-%b-%Y').strftime('%Y-%m-%d'))
-    
-    #Loci
-    if 'map' in  [feature for feature in record.features if feature.type == 'source'][0].qualifiers.keys():
-        location = [feature for feature in record.features if feature.type == 'source'][0].qualifiers['map'][0]
-    else:
-        location = [feature for feature in record.features if feature.type == 'source'][0].qualifiers['chromosome'][0]
-    loci.append(location)
-    
-    #GeneIDs
-    geneIDs.append(record.annotations['gi'])
-    
-    #Protein Products
-    if 'product' in [feature for feature in record.features if feature.type == 'CDS'][0].qualifiers.keys():
-        proteinproduct = [feature for feature in record.features if feature.type == 'CDS'][0].qualifiers['product'][0]
-    else:
-        proteinproduct = ''
-    protein_products.append(proteinproduct)
-    
-    #Description
-    descriptions.append(record.description)
-    
-    #Sources
-    sources.append(record.annotations['source'])
-    
-    #Genomic Sequence
-    sequences.append(str(record.seq))
-    
-    #Reading frame
-    reading_frames.append([feature for feature in record.features if feature.type == 'CDS'][0].qualifiers['codon_start'][0])
-    
-    #Protein sequence
-    if 'translation' in [feature for feature in record.features if feature.type == 'CDS'][0].qualifiers.keys():
-        translation = [feature for feature in record.features if feature.type == 'CDS'][0].qualifiers['translation'][0]
-    else:
-        translation = 'No Protein Product'
-    translations.append(translation)
-    
-    #CDS Boundaries
-    cds_no = 0
-    coding_seqs = dict()
+    accession = record.annotations['accessions'][0]
+    #CDS Boundaries and entry validation
     coding_seq_str = str([feature for feature in record.features if feature.type == 'CDS'][0].location)
-    if record.annotations['accessions'][0][:2] in coding_seq_str: #If CDS feature has splice variants, returns first match entry which is longest CDS
-        cds_no += 1
-        coding_seqs['CDS {}'.format(cds_no)] = s.search(coding_seq_str).group()
+    
+    #Skip entry due to partial CDS
+    if partial_search.search(coding_seq_str):
+        print(f'Omitting {accession}: Partial CDS')
+        partial_CDS_records += 1
+        continue
+    #Skip entry due to overlapping with other gene
+    if ext_join_search.search(coding_seq_str):
+        print(f'Omitting {accession}: External CDS join')
+        overlapping_records += 1
+        continue
+    #If CDS feature of entry is valid, append record
     else:
-        for match in s.finditer(coding_seq_str):
+        #Check if CDS is reverse complement:
+        if '(-)' in coding_seq_str:
+            complement.append('Y')
+        else:
+            complement.append('N')
+        cds_no = 0
+        coding_seqs = dict()
+        for match in cds_search.finditer(coding_seq_str):
             cds_no += 1
             coding_seqs['CDS {}'.format(cds_no)] = match.group()
-    coding_regions.append(coding_seqs)
+        coding_regions.append(coding_seqs)
+        accessions.append(accession)
+        dates.append(datetime.strptime(record.annotations['date'], '%d-%b-%Y').strftime('%Y-%m-%d'))
+        geneIDs.append(record.annotations['gi'])
+        descriptions.append(record.description)
+        sources.append(record.annotations['source'])
+        sequences.append(str(record.seq))
+        reading_frames.append([feature for feature in record.features if feature.type == 'CDS'][0].qualifiers['codon_start'][0])
+        
+        if 'map' in  [feature for feature in record.features if feature.type == 'source'][0].qualifiers.keys():
+            location = [feature for feature in record.features if feature.type == 'source'][0].qualifiers['map'][0]
+        else:
+            location = [feature for feature in record.features if feature.type == 'source'][0].qualifiers['chromosome'][0]
+        loci.append(location)
+        
+        if 'product' in [feature for feature in record.features if feature.type == 'CDS'][0].qualifiers.keys():
+            proteinproduct = [feature for feature in record.features if feature.type == 'CDS'][0].qualifiers['product'][0]
+        else:
+            proteinproduct = ''
+        protein_products.append(proteinproduct)
+        
+        if 'translation' in [feature for feature in record.features if feature.type == 'CDS'][0].qualifiers.keys():
+            translation = [feature for feature in record.features if feature.type == 'CDS'][0].qualifiers['translation'][0]
+        else:
+            translation = 'No Protein Product'
+        translations.append(translation)
+
+print(f'Partial CDS Records Omitted: {partial_CDS_records}')
+print(f'Overlapping Records Omitted: {overlapping_records}')
 
 #Import dependencies
 import pymysql
@@ -109,7 +111,7 @@ cursor = connection.cursor()
 #Create tables
 create_db = dict()
 create_db['drop gene table'] = 'DROP TABLE IF EXISTS genes;'
-create_db['gene_tbl'] = 'CREATE TABLE genes(Accession VARCHAR(12) PRIMARY KEY, Date DATE NOT NULL, Locus VARCHAR(40) NOT NULL, GeneID VARCHAR(8) NOT NULL, Product VARCHAR(255) NOT NULL, Description VARCHAR(255) NOT NULL, Source VARCHAR(60) NOT NULL, Sequence LONGBLOB NOT NULL, Frame INT(1) NOT NULL, Translation LONGBLOB NOT NULL, Coding_seq LONGBLOB, Coding_regions BLOB NOT NULL, Complement LONGBLOB);'
+create_db['gene_tbl'] = '''CREATE TABLE genes(Accession VARCHAR(12) PRIMARY KEY, Date DATE NOT NULL, Locus VARCHAR(40) NOT NULL, GeneID VARCHAR(8) NOT NULL, Product VARCHAR(255) NOT NULL, Description VARCHAR(255) NOT NULL, Source VARCHAR(60) NOT NULL, Sequence LONGBLOB NOT NULL, Frame INT(1) NOT NULL, Translation LONGBLOB NOT NULL, Coding_seq LONGBLOB, Coding_regions BLOB NOT NULL, Complement ENUM('Y', 'N') NOT NULL);'''
 
 for k, v in create_db.items():
     try:
@@ -128,7 +130,7 @@ import json
 
 cursor = connection.cursor()
 try:
-    for i in range(0, 861):
+    for i in range(0, len(accessions)):
         cursor.execute('INSERT INTO genes VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
                     (accessions[i], 
                      dates[i], 
@@ -142,7 +144,7 @@ try:
                      translations[i], 
                      None, 
                      json.dumps(coding_regions[i]),
-                     None
+                     complement[i]
                      )
                     )
     print('Populating genes table: ', end = '')
