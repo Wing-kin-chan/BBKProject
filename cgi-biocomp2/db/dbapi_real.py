@@ -82,7 +82,7 @@ def search(querytype: str, query: str, resultlen: int):
             results['Translation'] = row[9]
             results['Coding Sequence'] = row[10]
             results['Coding Regions'] = json.loads(row[11])
-            results['Reverse Complement'] = row[12]      
+            results['Complement'] = row[12]      
     
     cursor.close()
     
@@ -202,7 +202,7 @@ def getAllCodingRegions():
     to calculate total codon usage in the database.
     '''
     cursor = connection.cursor()
-    sql_AllSequences = 'SELECT Accession, Sequence, Frame, Coding_Regions FROM genes;'
+    sql_AllSequences = 'SELECT Accession, Sequence, Frame, Coding_Regions FROM genes, Complement;'
     all_coding_regions = list()
     
     cursor.execute(sql_AllSequences)
@@ -213,6 +213,7 @@ def getAllCodingRegions():
         results_row['Sequence'] = row[1]
         results_row['Reading Frame'] = row[2]
         results_row['Coding Regions'] = json.loads(row[3])
+        results_row['Complement'] = row[4]
         all_coding_regions.append(results_row)
     
     cursor.close() 
