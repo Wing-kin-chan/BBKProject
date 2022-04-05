@@ -30,7 +30,7 @@ partial_search = re.compile(r'(>|<)[0-9]+')
 ext_join_search = re.compile(r'[A-Z]{1,}[0-9]+')
 
 #Import and parse data into variable as lists
-for record in SeqIO.parse('chrom_CDS_10.gb', 'genbank'):
+for record in SeqIO.parse('test.gb', 'genbank'):
     accession = record.annotations['accessions'][0]
     #CDS Boundaries and entry validation
     coding_seq_str = str([feature for feature in record.features if feature.type == 'CDS'][0].location)
@@ -155,3 +155,17 @@ else:
 
 connection.commit()   
 cursor.close()
+
+results = 'getAccession(foo bar)'
+
+int_extract = re.compile(r'[0-9]+')
+
+coding_seq = str()
+
+if results['complement'] == 'Y':
+    sequence = results['sequence'][::-1]
+    for span in results['coding_regions'].values():
+        coord = list()
+        for match in int_extract.finditer(span):
+            coord.append(int(match.group()))
+        coding_seq += sequence
