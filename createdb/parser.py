@@ -83,6 +83,7 @@ class GenBank:
     GB_DATE = re.compile(r'[0-9]{2}-[a-zA-Z]{3}-[0-9]{4}') 
     GB_MAX_LINE_LEN = 79
     GB_ANNOT_INDENT = 12
+    GB_ANNOT_SPACE = '            '
     GB_FEATR_INDENT = 21
     GB_SEQ_LINE_LEN = 75
     GB_SEQ_START = 10
@@ -104,38 +105,78 @@ class GenBank:
         ...     'LOCUS XXXXX XXXXXXX 19-MAR-2008', 'ACCESSION AB0238483', 'DEFINITION', '//',
         ...     'LOCUS XXXXX XXXXXXX 19-MAR-2011', 'ACCESSION Y47293233', 'DEFINITION', '//']
         
-        >>> for record in strip_records(input)
+        >>> for record in GenBank().strip_records(input)
         ...     print(record)
-        ['LOCUS XXXXX XXXXXXX 19-MAR-2008', 'ACCESSION AB0238483', 'DEFINITION']
-        ['LOCUS XXXXX XXXXXXX 19-MAR-2011', 'ACCESSION Y47293233', 'DEFINITION']
+        ['LOCUS XXXXX XXXXXXX 19-MAR-2008', 'ACCESSION AB0238483', 'DEFINITION', '//']
+        ['LOCUS XXXXX XXXXXXX 19-MAR-2011', 'ACCESSION Y47293233', 'DEFINITION', '//']
         '''
         record = list()
         found_start = False
         i = 0
-        while not found_start:
-            for line in file:
-                if line[:self.GB_ANNOT_INDENT] == self.GB_RECORD_START:
-                    found_start = True
-                    record.append(line)
-                    i += 1
-                    break
-                else:
-                    i += 1
-                    continue
-        while found_start:
-            for line in file[i:]:
-                if line != self.GB_RECORD_END:
-                    record.append(line)
-                    i += 1
-                else:
-                    yield record
-                    record = list()
-                    found_start = False
-                    i += 1
+        while i <= len(file) - 1:
+            if not found_start:
+                for line in file[i:]:
+                    if line[:self.GB_ANNOT_INDENT] == self.GB_RECORD_START:
+                        found_start = True
+                        record.append(line)
+                        i += 1
+                        break
+                    else:
+                        i += 1
+                        continue
+            if found_start:
+                for line in file[i:]:
+                    if line != self.GB_RECORD_END:
+                        assert line[:self.GB_ANNOT_INDENT] != self.GB_RECORD_START, 'Incomplete record: line {}, missing //'.format(i-1)
+                        record.append(line)
+                        i += 1
+                    else:
+                        record.append(line)
+                        yield record
+                        record = list()
+                        found_start = False
+                        i += 1
+                        break
                     
-    def format_record(self, record: list):
+    def condense(self, record):
         '''
         Sub routine function
-        Takes single record list returned by strip_records and formats it into Record class type object
-        Not to be used on its own
+        Many GenBank features and annotations span multiple lines. This function iterates through a record returned by strip_records,
+        checks if the header of such has changed and if not, condenses the lines into a single string for parsing to the appropriate class.
+        
+        >>> input = ['LOCUS       XXXXX XXXXXXX 19-MAR-2011', 
+        ...     'ACCESSION   Y47293233', 
+        ...     'DEFINITION  partial CDS', '            FGF-2 Receptor', '//',]
+        
+        >>> for line in GenBank().condense(input):
+        ...     print(line)
+        LOCUS       XXXXX XXXXXXX 19-MAR-2011
+        ACCESSION   Y47293233
+        DEFINITION  partial CDS FGF-2 Receptor
         '''
+        output = ''
+        for line in record:
+            header = line[:self.GB_ANNOT_INDENT]
+            if header != self.GB_ANNOT_SPACE:
+                new_field = True
+            else:
+                new_field = False
+            if new_field:
+                yield output
+                output = line
+            if not new_field:
+                output += ' ' + line[12:]
+
+a = ['ACCESSION AB0238483', 'DEFINITION', '//',
+    'LOCUS XXXXX XXXXXXX 19-MAR-2008', 'ACCESSION AB0238483', 'DEFINITION', '//',
+     'LOCUS XXXXX XXXXXXX 19-MAR-2011', 'ACCESSION Y47293233', 'DEFINITION    partial CDS', 'FGF-2 Receptor', '//',
+     'ACCESSION AB0238483', 'DEFINITION', '//',
+     'LOCUS XXXXX XXXXXXX 21-JUL-2008', 'ACCESSION E98342334', 'DEFINITION', '//',
+     'LOCUS XXXXX XXXXXXX 22-OCT-1997', 'ACCESSION AL2352545', 'DEFINITION', '//']
+
+with open('test.gb', 'r') as f:
+    testgb = f.read().splitlines()
+
+for record in GenBank().strip_records(testgb):
+    for line in GenBank().condense(record):
+        print(line)
