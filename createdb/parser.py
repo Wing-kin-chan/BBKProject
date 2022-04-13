@@ -53,6 +53,7 @@ class Record:
         self.date = str()
         self.size = str()
         self.definition = str()
+        self.keywords = str()
         self.geneID = str()
         self.source = str()
         self.organism = str()
@@ -84,12 +85,18 @@ class GenBank:
     GB_MAX_LINE_LEN = 79
     GB_ANNOT_INDENT = 12
     GB_ANNOT_SPACE = '            '
-    GB_FEATR_INDENT = 21
-    GB_SEQ_LINE_LEN = 75
+    GB_FEATR_INDENT = 5
+    GB_REFERENCE_HEADERS = ['  AUTHORS   ', '  TITLE     ', '  JOURNAL   ', '   PUBMED   ', '  REMARK    ']
+    GB_REFERENCE_NO = re.compile(r'REFERENCE(.*?)[0-9]')
+    GB_AUTHORS = re.compile(r'AUTHORS((.|\n)*?)TITLE')
+    GB_TITLE = re.compile(r'TITLE((.|\n)*?)JOURNAL')
+    GB_JOURNAL = re.compile(r'JOURNAL((.|\n)*?)(PUBMED|REMARK|$)')
+    GB_PUBMED = re.compile(r'PUBMED((.|\n)*?)(REMARK|$)')
+    GB_REMARK = re.compile(r'REMARK((.|\n)*?)$')
     GB_SEQ_START = 10
     GB_SEQ_END = 74
     GB_LOCATION = re.compile(r'(>|<)*[0-9]+\.{2}[0-9]+')
-    GB_QUALIFIER = re.compile(r'\B/[a-zA-Z]+\_*[a-zA-Z]+')
+    GB_QUALIFIER = re.compile(r'\B/(.*?)\w\"')
     GB_RECORD_END = '//'
     
     def __init__(self):
@@ -154,18 +161,91 @@ class GenBank:
         ACCESSION   Y47293233
         DEFINITION  partial CDS FGF-2 Receptor
         '''
-        output = ''
+        annotation = ''
         for line in record:
             header = line[:self.GB_ANNOT_INDENT]
-            if header != self.GB_ANNOT_SPACE:
-                new_field = True
+            if header != self.GB_ANNOT_SPACE and header not in self.GB_REFERENCE_HEADERS and not any(char.isdigit() for char in header):
+                new_annotation = True
             else:
-                new_field = False
-            if new_field:
-                yield output
-                output = line
-            if not new_field:
-                output += ' ' + line[12:]
+                new_annotation = False
+            if new_annotation:
+                yield annotation
+                annotation = line
+            if not new_annotation:
+                if header == self.GB_ANNOT_SPACE:
+                    annotation += ' ' + line[self.GB_ANNOT_INDENT:]
+                if header in self.GB_REFERENCE_HEADERS:
+                    annotation += line
+                elif any(char.isdigit() for char in header):
+                    annotation += line[self.GB_SEQ_START:].replace(" ", "").upper()
+        
+    def feature_extractor(self, line):
+        header = line[:self.GB_ANNOT_INDENT]
+        if header == 'LOCUS       ':
+            values = line[self.GB_ANNOT_INDENT:].split()
+            size = values[1] + values[2]
+            residue_type = values[3]
+            date = values[6]
+            return size, residue_type, date
+                
+        if header == 'DEFINITION  ':
+            definition = line[self.GB_ANNOT_INDENT:]
+            return definition
+        
+        if header == 'VERSION     ':
+            geneID = line[self.GB_ANNOT_INDENT:].split()[1][3:]
+            return geneID
+        
+        if header == 'ACCESSION   ':
+            accessions = list()
+            for value in line[self.GB_ANNOT_INDENT:].split():
+                accessions.append(value)
+            return accessions
+        
+        if header == 'KEYWORDS    ':
+            keywords = line[self.GB_ANNOT_INDENT:]
+            return keywords
+        
+        if header == 'SOURCE      ':
+            source = line[self.GB_ANNOT_INDENT:]
+            return source
+        
+        if header == '  ORGANISM  ':
+            organism = line[self.GB_ANNOT_INDENT:]
+            return organism
+        
+        if header == 'REFERENCE   ':
+            if self.GB_PUBMED.search(line):
+                pubmed = self.GB_PUBMED.search(line).group(1).strip()
+            else:
+                pubmed = None
+                
+            if self.GB_REMARK.search(line):
+                remarks = self.GB_REMARK.search(line).group(1).strip()
+            else:
+                remarks = None
+            reference = {
+                'authors': self.GB_AUTHORS.search(line).group(1).strip(),
+                'title': self.GB_TITLE.search(line).group(1).strip(),
+                'journal': self.GB_JOURNAL.search(line).group(1).strip(),
+                'pubmed': pubmed,
+                'remarks': remarks
+            }
+            return reference
+        
+        if header == 'ORIGIN      ':
+            sequence = line[self.GB_ANNOT_INDENT:]
+            return sequence
+
+    def parse(self, handle):
+        with open(handle, 'r') as f:
+            self.file = f.read().splitlines()
+            
+        for record in self.strip_records(self.file):
+            output = Record()
+            for line in self.condense(record):
+                output.update(line)
+            return output
 
 a = ['ACCESSION AB0238483', 'DEFINITION', '//',
     'LOCUS XXXXX XXXXXXX 19-MAR-2008', 'ACCESSION AB0238483', 'DEFINITION', '//',
@@ -177,6 +257,11 @@ a = ['ACCESSION AB0238483', 'DEFINITION', '//',
 with open('test.gb', 'r') as f:
     testgb = f.read().splitlines()
 
+b = list()
 for record in GenBank().strip_records(testgb):
     for line in GenBank().condense(record):
-        print(line)
+        GenBank().feature_extractor(line)
+
+
+line = 'LOCUS       AB009903                 268 bp    DNA     linear   PRI 14-APR-2000'
+
