@@ -4,9 +4,9 @@ Code to first parse the genbank file into Python, then load onto MySQL Database.
 Written by Wing
 '''
 #Import dependencies to read data data and parser
-from Bio import SeqIO
 import re
 from datetime import datetime
+import GBparser
 
 #Create lists for each property of gene entry
 accessions = list()
@@ -30,7 +30,7 @@ partial_search = re.compile(r'(>|<)[0-9]+')
 ext_join_search = re.compile(r'[A-Z]{1,}[0-9]+')
 
 #Import and parse data into variable as lists
-for record in SeqIO.parse('test.gb', 'genbank'):
+for record in GBparser.parse('test.gb'):
     accession = record.annotations['accessions'][0]
     #CDS Boundaries and entry validation
     coding_seq_str = str([feature for feature in record.features if feature.type == 'CDS'][0].location)

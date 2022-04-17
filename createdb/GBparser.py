@@ -122,8 +122,14 @@ class Feature:
         feature_str = str()
         if self.key == None:
             self.key = ''
-        feature_str += self.type + ': ' + self.key + ', ' + self.value
+        feature_str += self.type + ': ' + self.key + ', ' + self.value[:24]
         return feature_str
+    
+    def __repr__(self):
+        feature_repr = str()
+        if self.key == str():
+            self.key = ''
+        feature_repr += 'type=' + self.type + ', ' + 'key=' + self.key + ', ', + 'value=' + self.value[:24]
 
 class GenBank:
     '''Functions used to import and parse GenBank files'''
@@ -333,14 +339,14 @@ class GenBank:
             sequence = line[self.GB_ANNOT_INDENT:]
             return 'SEQUENCE', sequence
 
-    def parse(self, handle):
+def parse(handle):
         with open(handle, 'r') as f:
-            self.file = f.read().splitlines()
+            file = f.read().splitlines()
             
-        for record in self.strip_records(self.file):
+        for record in GenBank().strip_records(file):
             output = Record()
-            for line in self.condense(record):
-                output.update(self.annotation_feeder(line))
+            for line in GenBank().condense(record):
+                output.update(GenBank().annotation_feeder(line))
             yield output
 
 a = ['ACCESSION AB0238483', 'DEFINITION', '//',
@@ -357,17 +363,7 @@ b = list()
 c = Record()
 for record in GenBank().strip_records(testgb):
     for line in GenBank().condense(record):
-        print(line)
+        print(line) 
 
 for record in GenBank().parse('chrom_CDS_10.gb'):
-    print(record.size)
-    print(record.residue_type)
-    print(record.date)
-    print(record.definition)
-    print(record.accessions)
-    print(record.geneID)
-'''    print(record.source)
-    print(record.organism)
-    print(record.references)
-    print(record.features)
-    print(record.sequence)'''
+    print(record)
