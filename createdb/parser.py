@@ -48,18 +48,58 @@ class Record:
     
     def __init__(self):
         '''Initialise the Record class'''
-        self.accessions = list()
-        self.residue_type = str()
-        self.date = str()
-        self.size = str()
-        self.definition = str()
-        self.keywords = str()
-        self.geneID = str()
-        self.source = str()
-        self.organism = str()
+        self.accessions = None
+        self.residue_type = None
+        self.date = None
+        self.size = None
+        self.definition = None
+        self.keywords = None
+        self.geneID = None
+        self.source = None
+        self.organism = None
         self.references = dict()
         self.features = dict()
-        self.sequence = str()
+        self.sequence = None
+        self.reference_no = 0
+        
+    def update(self, input):
+        '''Reads in outputs from the annotation_feeder and stores values in appropriate fields'''
+        if input == None:
+            return
+        
+        if input[0] == 'LOCUS':
+            self.size = input[1]
+            self.residue_type = input[2]
+            self.date = input[3]
+        
+        if input[0] == 'DEFENITION':
+            self.definition = input[1]
+            
+        if input[0] == 'GENEID':
+            self.geneID == input[1]
+            
+        if input[0] == 'ACCESSION':
+            self.accessions = input[1]
+            
+        if input[0] == 'KEYWORDS':
+            self.keywords = input[1]
+            
+        if input[0] == 'SOURCE':
+            self.source = input[1]
+            
+        if input[0] == 'ORGANISM':
+            self.organism = input[1]
+            
+        if input[0] == 'REFERENCE':
+            self.reference_no += 1
+            self.references['{}'.format(self.reference_no)] = input[1]
+            
+        if input[0] == 'FEATURE':
+            self.features['{}'.format(input[1])] = input[2:]
+            
+        if input[0] == 'SEQUENCE':
+            self.sequence = input[1]
+        
     
 class Feature:
     '''
@@ -77,6 +117,13 @@ class Feature:
         self.type = type
         self.key = key
         self.value = value
+        
+    def __str__(self):
+        feature_str = str()
+        if self.key == None:
+            self.key = ''
+        feature_str += self.type + ': ' + self.key + ', ' + self.value
+        return feature_str
 
 class GenBank:
     '''Functions used to import and parse GenBank files'''
@@ -86,10 +133,11 @@ class GenBank:
     GB_ANNOT_INDENT = 12
     GB_ANNOT_SPACE = '            '
     GB_FEATR_INDENT = 5
+    GB_FEATR_SPACE = '     '
     GB_REFERENCE_HEADERS = ['  AUTHORS   ', '  TITLE     ', '  JOURNAL   ', '   PUBMED   ', '  REMARK    ']
     GB_REFERENCE_NO = re.compile(r'REFERENCE(.*?)[0-9]')
-    GB_AUTHORS = re.compile(r'AUTHORS((.|\n)*?)TITLE')
-    GB_TITLE = re.compile(r'TITLE((.|\n)*?)JOURNAL')
+    GB_AUTHORS = re.compile(r'AUTHORS((.|\n)*?)(TITLE|JOURNAL|$)')
+    GB_TITLE = re.compile(r'TITLE((.|\n)*?)(JOURNAL|PUBMED|REMARK|$)')
     GB_JOURNAL = re.compile(r'JOURNAL((.|\n)*?)(PUBMED|REMARK|$)')
     GB_PUBMED = re.compile(r'PUBMED((.|\n)*?)(REMARK|$)')
     GB_REMARK = re.compile(r'REMARK((.|\n)*?)$')
@@ -168,10 +216,12 @@ class GenBank:
                 new_annotation = True
             else:
                 new_annotation = False
-            if new_annotation:
+            if new_annotation and annotation != '':
                 yield annotation
                 annotation = line
-            if not new_annotation:
+            elif new_annotation and annotation == '':
+                annotation = line
+            elif not new_annotation:
                 if header == self.GB_ANNOT_SPACE:
                     annotation += ' ' + line[self.GB_ANNOT_INDENT:]
                 if header in self.GB_REFERENCE_HEADERS:
@@ -179,42 +229,61 @@ class GenBank:
                 elif any(char.isdigit() for char in header):
                     annotation += line[self.GB_SEQ_START:].replace(" ", "").upper()
         
-    def feature_extractor(self, line):
+    def annotation_feeder(self, line):
+        '''
+        Sub routine function
+        Reads condensed lines from condense function, and extracts data to be passed onto the record updater.
+        '''
         header = line[:self.GB_ANNOT_INDENT]
         if header == 'LOCUS       ':
             values = line[self.GB_ANNOT_INDENT:].split()
             size = values[1] + values[2]
             residue_type = values[3]
             date = values[6]
-            return size, residue_type, date
+            return 'LOCUS', size, residue_type, date
                 
         if header == 'DEFINITION  ':
             definition = line[self.GB_ANNOT_INDENT:]
-            return definition
+            return 'DEFENITION', definition
         
         if header == 'VERSION     ':
             geneID = line[self.GB_ANNOT_INDENT:].split()[1][3:]
-            return geneID
+            return 'GENEID', geneID
         
         if header == 'ACCESSION   ':
             accessions = list()
             for value in line[self.GB_ANNOT_INDENT:].split():
                 accessions.append(value)
-            return accessions
+            return 'ACCESSION', accessions
         
         if header == 'KEYWORDS    ':
             keywords = line[self.GB_ANNOT_INDENT:]
-            return keywords
+            return 'KEYWORDS', keywords
         
         if header == 'SOURCE      ':
             source = line[self.GB_ANNOT_INDENT:]
-            return source
+            return 'SOURCE', source
         
         if header == '  ORGANISM  ':
             organism = line[self.GB_ANNOT_INDENT:]
-            return organism
+            return 'ORGANISM', organism
         
         if header == 'REFERENCE   ':
+            if self.GB_AUTHORS.search(line):
+                authors = self.GB_AUTHORS.search(line).group(1).strip()
+            else:
+                authors = None                
+            
+            if self.GB_TITLE.search(line):
+                title = self.GB_TITLE.search(line).group(1).strip()
+            else:
+                title = None
+            
+            if self.GB_JOURNAL.search(line):
+                journal = self.GB_JOURNAL.search(line).group(1).strip()
+            else:
+                journal = None
+            
             if self.GB_PUBMED.search(line):
                 pubmed = self.GB_PUBMED.search(line).group(1).strip()
             else:
@@ -225,17 +294,44 @@ class GenBank:
             else:
                 remarks = None
             reference = {
-                'authors': self.GB_AUTHORS.search(line).group(1).strip(),
-                'title': self.GB_TITLE.search(line).group(1).strip(),
-                'journal': self.GB_JOURNAL.search(line).group(1).strip(),
+                'authors': authors,
+                'title': title,
+                'journal': journal,
                 'pubmed': pubmed,
                 'remarks': remarks
             }
-            return reference
+            return 'REFERENCE', reference
         
+        if header[:self.GB_ANNOT_INDENT] == 'COMMENT     ':
+            pass
+        
+        if header[:self.GB_ANNOT_INDENT] == 'FEATURES    ':
+            pass
+        
+        if header[:self.GB_FEATR_INDENT] == self.GB_FEATR_SPACE and not any(char.isdigit() for char in header):
+            feature_name = line.split()[0]
+            
+            location_str = str()
+            if 'complement' in line.split()[1]:
+                direction = '(-)'
+            else:
+                direction = ''
+            for match in self.GB_LOCATION.finditer(line):
+                location_str += match.group().replace('..', ':') + direction + ','
+            location = Feature('location', None, location_str)
+            
+            qualifiers = list()
+            for match in self.GB_QUALIFIER.finditer(line):
+                key = match.group().split('=')[0][1:]
+                value = match.group().split('=')[1].strip('"')
+                qualifier = Feature('qualifier', key, value)
+                qualifiers.append(qualifier)
+                
+            return 'FEATURE', feature_name, location, qualifiers    
+          
         if header == 'ORIGIN      ':
             sequence = line[self.GB_ANNOT_INDENT:]
-            return sequence
+            return 'SEQUENCE', sequence
 
     def parse(self, handle):
         with open(handle, 'r') as f:
@@ -244,8 +340,8 @@ class GenBank:
         for record in self.strip_records(self.file):
             output = Record()
             for line in self.condense(record):
-                output.update(line)
-            return output
+                output.update(self.annotation_feeder(line))
+            yield output
 
 a = ['ACCESSION AB0238483', 'DEFINITION', '//',
     'LOCUS XXXXX XXXXXXX 19-MAR-2008', 'ACCESSION AB0238483', 'DEFINITION', '//',
@@ -258,10 +354,20 @@ with open('test.gb', 'r') as f:
     testgb = f.read().splitlines()
 
 b = list()
+c = Record()
 for record in GenBank().strip_records(testgb):
     for line in GenBank().condense(record):
-        GenBank().feature_extractor(line)
+        print(line)
 
-
-line = 'LOCUS       AB009903                 268 bp    DNA     linear   PRI 14-APR-2000'
-
+for record in GenBank().parse('chrom_CDS_10.gb'):
+    print(record.size)
+    print(record.residue_type)
+    print(record.date)
+    print(record.definition)
+    print(record.accessions)
+    print(record.geneID)
+'''    print(record.source)
+    print(record.organism)
+    print(record.references)
+    print(record.features)
+    print(record.sequence)'''
