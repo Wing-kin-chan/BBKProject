@@ -150,6 +150,7 @@ class GenBank:
     GB_SEQ_START = 10
     GB_SEQ_END = 74
     GB_LOCATION = re.compile(r'(>|<)*[0-9]+\.{2}[0-9]+')
+    GB_COMPOUND_LOCATION = re.compile(r'([a-zA-Z][a-zA-Z0-9_\.\|]*[a-zA-Z0-9]?\:)?(%s)')%(GB_LOCATION)
     GB_QUALIFIER = re.compile(r'\B/(.*?)\w\"')
     GB_RECORD_END = '//'
     
@@ -340,14 +341,14 @@ class GenBank:
             return 'SEQUENCE', sequence
 
 def parse(handle):
-        with open(handle, 'r') as f:
-            file = f.read().splitlines()
-            
-        for record in GenBank().strip_records(file):
-            output = Record()
-            for line in GenBank().condense(record):
-                output.update(GenBank().annotation_feeder(line))
-            yield output
+    with open(handle, 'r') as f:
+        file = f.read().splitlines()
+        
+    for record in GenBank().strip_records(file):
+        output = Record()
+        for line in GenBank().condense(record):
+            output.update(GenBank().annotation_feeder(line))
+        yield output
 
 a = ['ACCESSION AB0238483', 'DEFINITION', '//',
     'LOCUS XXXXX XXXXXXX 19-MAR-2008', 'ACCESSION AB0238483', 'DEFINITION', '//',
