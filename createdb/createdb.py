@@ -159,16 +159,3 @@ else:
 connection.commit()   
 cursor.close()
 
-results = 'getAccession(foo bar)'
-
-int_extract = re.compile(r'[0-9]+')
-
-coding_seq = str()
-
-if results['complement'] == 'Y':
-    sequence = results['sequence'][::-1]
-    for span in results['coding_regions'].values():
-        coord = list()
-        for match in int_extract.finditer(span):
-            coord.append(int(match.group()))
-        coding_seq += sequence
