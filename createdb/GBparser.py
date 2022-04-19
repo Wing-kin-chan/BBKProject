@@ -76,7 +76,7 @@ class Record:
             self.definition = input[1]
             
         if input[0] == 'GENEID':
-            self.geneID == input[1]
+            self.geneID = input[1]
             
         if input[0] == 'ACCESSION':
             self.accessions = input[1]
@@ -95,7 +95,8 @@ class Record:
             self.references['{}'.format(self.reference_no)] = input[1]
             
         if input[0] == 'FEATURE':
-            self.features['{}'.format(input[1])] = input[2:]
+            self.features['{}'.format(input[1])] = {'location': input[2],
+                                                    'qualifiers': input[3:]}
             
         if input[0] == 'SEQUENCE':
             self.sequence = input[1]
@@ -119,17 +120,21 @@ class Feature:
         self.value = value
         
     def __str__(self):
-        feature_str = str()
-        if self.key == None:
-            self.key = ''
-        feature_str += self.type + ': ' + self.key + ', ' + self.value[:24]
+        feature_str = ''
+        if self.type == 'location':
+            feature_str += self.type + ': ' + self.value
+        elif self.type == 'qualifier':
+            feature_str += self.type + ', ' + self.key + ': ' + self.value
         return feature_str
     
-    def __repr__(self):
-        feature_repr = str()
-        if self.key == str():
-            self.key = ''
-        feature_repr += 'type=' + self.type + ', ' + 'key=' + self.key + ', ', + 'value=' + self.value[:24]
+    '''def __repr__(self):
+        feature_repr = ''
+        if self.type == 'location':
+            feature_str += self.type + ': ' + self.value
+        elif self.type == 'qualifier':
+            feature_str += self.type + ', ' + self.key + ': ' + self.value
+        return feature_repr'''
+        
 
 class GenBank:
     '''Functions used to import and parse GenBank files'''
@@ -140,6 +145,7 @@ class GenBank:
     GB_ANNOT_SPACE = '            '
     GB_FEATR_INDENT = 5
     GB_FEATR_SPACE = '     '
+    GB_QUALIFR_SPACE = '          '
     GB_REFERENCE_HEADERS = ['  AUTHORS   ', '  TITLE     ', '  JOURNAL   ', '   PUBMED   ', '  REMARK    ']
     GB_REFERENCE_NO = re.compile(r'REFERENCE(.*?)[0-9]')
     GB_AUTHORS = re.compile(r'AUTHORS((.|\n)*?)(TITLE|JOURNAL|$)')
@@ -149,9 +155,8 @@ class GenBank:
     GB_REMARK = re.compile(r'REMARK((.|\n)*?)$')
     GB_SEQ_START = 10
     GB_SEQ_END = 74
-    GB_LOCATION = re.compile(r'(>|<)*[0-9]+\.{2}[0-9]+')
-    GB_COMPOUND_LOCATION = re.compile(r'([a-zA-Z][a-zA-Z0-9_\.\|]*[a-zA-Z0-9]?\:)?(%s)')%(GB_LOCATION)
-    GB_QUALIFIER = re.compile(r'\B/(.*?)\w\"')
+    GB_LOCATION = re.compile(r'([a-zA-Z][a-zA-Z0-9_\.\|]*[a-zA-Z0-9]?\:)?(>|<)*[0-9]+\.{2}(>|<)*[0-9]+')
+    GB_QUALIFIER = re.compile(r'\B/(\w|=)*(\"|[0-9]).+?(?=(\"|/[a-z]))')
     GB_RECORD_END = '//'
     
     def __init__(self):
@@ -324,13 +329,13 @@ class GenBank:
             else:
                 direction = ''
             for match in self.GB_LOCATION.finditer(line):
-                location_str += match.group().replace('..', ':') + direction + ','
+                location_str += match.group().replace('..', ':') + direction + ', '
             location = Feature('location', None, location_str)
             
             qualifiers = list()
             for match in self.GB_QUALIFIER.finditer(line):
                 key = match.group().split('=')[0][1:]
-                value = match.group().split('=')[1].strip('"')
+                value = match.group().split('=')[1].strip('"').replace(self.GB_QUALIFR_SPACE, ' ')
                 qualifier = Feature('qualifier', key, value)
                 qualifiers.append(qualifier)
                 
@@ -341,6 +346,11 @@ class GenBank:
             return 'SEQUENCE', sequence
 
 def parse(handle):
+    '''
+    GenBank parser method
+    
+    Generator object for parsing multi GenBank files yield record objects for each record within the file.
+    '''
     with open(handle, 'r') as f:
         file = f.read().splitlines()
         
@@ -350,21 +360,92 @@ def parse(handle):
             output.update(GenBank().annotation_feeder(line))
         yield output
 
-a = ['ACCESSION AB0238483', 'DEFINITION', '//',
-    'LOCUS XXXXX XXXXXXX 19-MAR-2008', 'ACCESSION AB0238483', 'DEFINITION', '//',
-     'LOCUS XXXXX XXXXXXX 19-MAR-2011', 'ACCESSION Y47293233', 'DEFINITION    partial CDS', 'FGF-2 Receptor', '//',
-     'ACCESSION AB0238483', 'DEFINITION', '//',
-     'LOCUS XXXXX XXXXXXX 21-JUL-2008', 'ACCESSION E98342334', 'DEFINITION', '//',
-     'LOCUS XXXXX XXXXXXX 22-OCT-1997', 'ACCESSION AL2352545', 'DEFINITION', '//']
-
-with open('test.gb', 'r') as f:
+'''with open('test.gb', 'r') as f:
     testgb = f.read().splitlines()
 
 b = list()
 c = Record()
 for record in GenBank().strip_records(testgb):
     for line in GenBank().condense(record):
-        print(line) 
+        print(line) '''
+        
+from datetime import datetime
 
-for record in GenBank().parse('chrom_CDS_10.gb'):
-    print(record)
+#Create lists for each property of gene entry
+accessions = list()
+dates = list()
+loci = list()
+geneIDs = list()
+protein_products = list()
+descriptions = list()
+sources = list()
+sequences = list()
+translations = list()
+coding_regions = list()
+reading_frames = list()
+complement = list()
+partial_CDS_records = 0
+overlapping_records = 0
+
+#Define regex for parsing coding regions
+cds_search = re.compile(r'[0-9]+:[0-9]+') 
+partial_search = re.compile(r'(>|<)[0-9]+')
+ext_join_search = re.compile(r'[A-Z]{1,}[0-9]+')
+
+#Import and parse data into variable as lists
+for record in parse('chrom_CDS_10.gb'):
+    accession = record.accessions[0]
+    #CDS Boundaries and entry validation
+    coding_reg_str = record.features['CDS']['location'].value
+    
+    #Skip entry due to partial CDS
+    if partial_search.search(coding_reg_str):
+        print(f'Omitting {accession}: Partial CDS')
+        partial_CDS_records += 1
+        continue
+    #Skip entry due to overlapping with other gene
+    if ext_join_search.search(coding_reg_str):
+        print(f'Omitting {accession}: External CDS join')
+        overlapping_records += 1
+        continue
+    #If CDS feature of entry is valid, append record
+    else:
+        #Check if CDS is reverse complement:
+        if '(-)' in coding_reg_str:
+            complement.append('Y')
+        else:
+            complement.append('N')
+        cds_no = 0
+        coding_regs = dict()
+        for match in cds_search.finditer(coding_reg_str):
+            cds_no += 1
+            coding_regs['CDS {}'.format(cds_no)] = match.group()
+        coding_regions.append(coding_regs)
+        accessions.append(accession)
+        dates.append(datetime.strptime(record.date, '%d-%b-%Y').strftime('%Y-%m-%d'))
+        geneIDs.append(record.geneID)
+        descriptions.append(record.definition)
+        sources.append(record.source)
+        sequences.append(record.sequence)
+        reading_frames.append([feature for feature in record.features['CDS']['qualifiers'][0] if feature.key == 'codon_start'][0].value)
+        
+        if 'map' in  [feature.key for feature in record.features['source']['qualifiers'][0]]:
+            location = [feature for feature in record.features['source']['qualifiers'][0] if feature.key == 'map'][0].value
+        else:
+            location = [feature for feature in record.features['source']['qualifiers'][0] if feature.key == 'chromosome'][0].value
+        loci.append(location)
+        
+        if 'product' in [feature.key for feature in record.features['CDS']['qualifiers'][0]]:
+            proteinproduct = [feature for feature in record.features['CDS']['qualifiers'][0] if feature.key == 'product'][0].value
+        else:
+            proteinproduct = ''
+        protein_products.append(proteinproduct)
+        
+        if 'translation' in [feature.key for feature in record.features['CDS']['qualifiers'][0]]:
+            translation = [feature for feature in record.features['CDS']['qualifiers'][0] if feature.key == 'product'][0].value
+        else:
+            translation = 'No Protein Product'
+        translations.append(translation)
+
+print(f'Partial CDS Records Omitted: {partial_CDS_records}')
+print(f'Overlapping Records Omitted: {overlapping_records}')

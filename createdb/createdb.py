@@ -6,6 +6,9 @@ Written by Wing
 #Import dependencies to read data data and parser
 import re
 from datetime import datetime
+import sys, os
+sys.path.append('..\createdb\ ')
+
 import GBparser
 
 #Create lists for each property of gene entry
@@ -30,56 +33,56 @@ partial_search = re.compile(r'(>|<)[0-9]+')
 ext_join_search = re.compile(r'[A-Z]{1,}[0-9]+')
 
 #Import and parse data into variable as lists
-for record in GBparser.parse('test.gb'):
-    accession = record.annotations['accessions'][0]
+for record in parse('chrom_CDS_10.gb'):
+    accession = record.accessions[0]
     #CDS Boundaries and entry validation
-    coding_seq_str = str([feature for feature in record.features if feature.type == 'CDS'][0].location)
+    coding_reg_str = record.features['CDS']['location'].value
     
     #Skip entry due to partial CDS
-    if partial_search.search(coding_seq_str):
+    if partial_search.search(coding_reg_str):
         print(f'Omitting {accession}: Partial CDS')
         partial_CDS_records += 1
         continue
     #Skip entry due to overlapping with other gene
-    if ext_join_search.search(coding_seq_str):
+    if ext_join_search.search(coding_reg_str):
         print(f'Omitting {accession}: External CDS join')
         overlapping_records += 1
         continue
     #If CDS feature of entry is valid, append record
     else:
         #Check if CDS is reverse complement:
-        if '(-)' in coding_seq_str:
+        if '(-)' in coding_reg_str:
             complement.append('Y')
         else:
             complement.append('N')
         cds_no = 0
-        coding_seqs = dict()
-        for match in cds_search.finditer(coding_seq_str):
+        coding_regs = dict()
+        for match in cds_search.finditer(coding_reg_str):
             cds_no += 1
-            coding_seqs['CDS {}'.format(cds_no)] = match.group()
-        coding_regions.append(coding_seqs)
+            coding_regs['CDS {}'.format(cds_no)] = match.group()
+        coding_regions.append(coding_regs)
         accessions.append(accession)
-        dates.append(datetime.strptime(record.annotations['date'], '%d-%b-%Y').strftime('%Y-%m-%d'))
-        geneIDs.append(record.annotations['gi'])
-        descriptions.append(record.description)
-        sources.append(record.annotations['source'])
-        sequences.append(str(record.seq))
-        reading_frames.append([feature for feature in record.features if feature.type == 'CDS'][0].qualifiers['codon_start'][0])
+        dates.append(datetime.strptime(record.date, '%d-%b-%Y').strftime('%Y-%m-%d'))
+        geneIDs.append(record.geneID)
+        descriptions.append(record.definition)
+        sources.append(record.source)
+        sequences.append(record.sequence)
+        reading_frames.append([feature for feature in record.features['CDS']['qualifiers'][0] if feature.key == 'codon_start'][0].value)
         
-        if 'map' in  [feature for feature in record.features if feature.type == 'source'][0].qualifiers.keys():
-            location = [feature for feature in record.features if feature.type == 'source'][0].qualifiers['map'][0]
+        if 'map' in  [feature.key for feature in record.features['source']['qualifiers'][0]]:
+            location = [feature for feature in record.features['source']['qualifiers'][0] if feature.key == 'map'][0].value
         else:
-            location = [feature for feature in record.features if feature.type == 'source'][0].qualifiers['chromosome'][0]
+            location = [feature for feature in record.features['source']['qualifiers'][0] if feature.key == 'chromosome'][0].value
         loci.append(location)
         
-        if 'product' in [feature for feature in record.features if feature.type == 'CDS'][0].qualifiers.keys():
-            proteinproduct = [feature for feature in record.features if feature.type == 'CDS'][0].qualifiers['product'][0]
+        if 'product' in [feature.key for feature in record.features['CDS']['qualifiers'][0]]:
+            proteinproduct = [feature for feature in record.features['CDS']['qualifiers'][0] if feature.key == 'product'][0].value
         else:
             proteinproduct = ''
         protein_products.append(proteinproduct)
         
-        if 'translation' in [feature for feature in record.features if feature.type == 'CDS'][0].qualifiers.keys():
-            translation = [feature for feature in record.features if feature.type == 'CDS'][0].qualifiers['translation'][0]
+        if 'translation' in [feature.key for feature in record.features['CDS']['qualifiers'][0]]:
+            translation = [feature for feature in record.features['CDS']['qualifiers'][0] if feature.key == 'translation'][0].value
         else:
             translation = 'No Protein Product'
         translations.append(translation)
