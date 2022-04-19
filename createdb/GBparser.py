@@ -359,13 +359,3 @@ def parse(handle):
         for line in GenBank().condense(record):
             output.update(GenBank().annotation_feeder(line))
         yield output
-
-'''with open('test.gb', 'r') as f:
-    testgb = f.read().splitlines()
-
-b = list()
-c = Record()
-for record in GenBank().strip_records(testgb):
-    for line in GenBank().condense(record):
-        print(line) '''
-          
