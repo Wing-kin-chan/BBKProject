@@ -33,7 +33,7 @@ partial_search = re.compile(r'(>|<)[0-9]+')
 ext_join_search = re.compile(r'[A-Z]{1,}[0-9]+')
 
 #Import and parse data into variable as lists
-for record in parse('chrom_CDS_10.gb'):
+for record in GBparser.parse('chrom_CDS_10.gb'):
     accession = record.accessions[0]
     #CDS Boundaries and entry validation
     coding_reg_str = record.features['CDS']['location'].value
