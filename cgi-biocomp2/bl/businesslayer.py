@@ -54,7 +54,7 @@ def coding_region(accession):
     #For ectracting the coding region:
     t = ''
     j = ''
-    p = 1
+    p = 2
     complement_nts = ''
     for k, v in d_coding.items():
         start = int((str(v).split(':'))[0])
@@ -77,7 +77,30 @@ def coding_region(accession):
                 complement_nts += 'A'
         complement_seq = complement_nts[::-1]
     if complement == 'Y':
-        extractedCoding_region = 'Complement sequence' + complement_seq
+        extractedCoding_region = complement_seq
     elif complement == 'N':
-        extractedCoding_region = 'Coding Sequence:' + t
+        extractedCoding_region = t
     return coding_highlighted, extractedCoding_region, accession
+
+def aa_nt(accession):
+    """
+    
+    """
+    import businesslayer as bl
+    from businesslayer import coding_region
+    db_output = {}
+    d_coding = {}
+    source = db.getAccession(accession)
+    db_output.update(source)
+    aminoacids = []
+    for k, v in db_output.items():
+        if k == 'Translation':
+            aa_seq = str(v).replace('b\'','').replace(' ', '').replace('\'', '')
+            aaseq_stop = aa_seq + '*'
+    coding_Seq = bl.coding_region(accession)
+    coding_ntSeq = coding_Seq[1]
+    nt_triplets = [coding_ntSeq[i:i + 3] for i in range(0, len(coding_ntSeq), 3)]
+    for s in aaseq_stop:
+        aminoacids.append(s)
+    zipped = list(zip(nt_triplets, aminoacids))
+    return zipped, accession
