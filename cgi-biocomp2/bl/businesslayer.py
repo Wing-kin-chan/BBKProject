@@ -26,7 +26,7 @@ def coding_region(accession):
     for k, v in db_output.items():
             if k == 'Coding Regions':
                     d_coding.update(v)
-    
+    #For highlighting the coding region:
     coding_highlighted = ''
     s2 = ''
     i = 0
@@ -36,6 +36,8 @@ def coding_region(accession):
         if k == 'Sequence':
             s1 = str(v).split('\'')
             s2 = str(s1[1])
+        if k == 'Complement':
+            complement = str(v).strip()
     for k, v in d_coding.items():
         beginning.append(int((str(v).split(':'))[0]))
         end.append(int((str(v).split(':'))[1]))
@@ -49,4 +51,33 @@ def coding_region(accession):
         else:
             coding_highlighted += n
     i += 2
-    return coding_highlighted, accession
+    #For ectracting the coding region:
+    t = ''
+    j = ''
+    p = 1
+    complement_nts = ''
+    for k, v in d_coding.items():
+        start = int((str(v).split(':'))[0])
+        stop = int((str(v).split(':'))[1])
+        for u, n in enumerate(s2):
+            if u > start - p:
+                if u < stop:
+                    t += n
+            else:
+                j += n
+    if complement == 'Y':
+        for s in t:
+            if s == 'G':
+                complement_nts += 'C'
+            elif s == 'C':
+                complement_nts += 'G'
+            elif s == 'A':
+                complement_nts += 'T'
+            elif s == 'T':
+                complement_nts += 'A'
+        complement_seq = complement_nts[::-1]
+    if complement == 'Y':
+        extractedCoding_region = 'Complement sequence' + complement_seq
+    elif complement == 'N':
+        extractedCoding_region = 'Coding Sequence:' + t
+    return coding_highlighted, extractedCoding_region, accession
