@@ -67,11 +67,11 @@ def getByLocus(query: str, resultslen: int):
 	'''
 	return dbapi.getByLocus(query, resultslen) 
 
-def ntCoding_region(Accession: str):
+def ntCoding_region(accession):
 	'''
 		Function that will interact with a Blayer coding_region function that takes accession_id, nt_seq[string], codon_start[int], exon_boundaries[list of int tuples] from the DBlayer and returns string of nt_seq with brackets indicating coding regions e.g. ATC{TGTGTCC}ATGTT & corresponding accession_id
 	'''
-	return bl.coding_region(Accession)
+	return bl.coding_region(accession)
 
 
 def aaNt_seqsAligned():
