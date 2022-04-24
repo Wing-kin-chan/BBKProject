@@ -54,7 +54,7 @@ def coding_region(accession):
         else:
             coding_highlighted += n
     i += 2
-    #For ectracting the coding region:
+    #For extracting the coding region:
     t = ''
     j = ''
     p = 2
@@ -116,7 +116,7 @@ def enz_table(accession):
     
     from businesslayer import coding_region
     
-    dic = {}
+    table_dic = {}
     enzyme = []
     restr_site = []
     site_length = []
@@ -131,7 +131,7 @@ def enz_table(accession):
         site_len = len(site)
         site_length.append(site_len)
         cutting_offset = int(i.split('=')[2])
-        dic[i.split('=')[0]] = ['Site:', site, 'Site_len:', site_len, 'Cutting_offset:', cutting_offset, 'Cut position(s):']
+        table_dic[i.split('=')[0]] = ['Site:', site, 'Site_len:', site_len, 'Cutting_offset:', cutting_offset, 'Cut position(s):']
         site_len = 0
     
     boundaries0 = []
@@ -153,7 +153,7 @@ def enz_table(accession):
     pattern = ''
     freq = 0
     badcutterlist = 0
-    for k, v in dic.items():
+    for k, v in table_dic.items():
         for nucleotide in v[1]:
             if nucleotide in degen:
                 if nucleotide == 'R':
@@ -171,15 +171,15 @@ def enz_table(accession):
             freq += 1
             if boundaries[0] <= ss <= boundaries[1]:
                 badcutterlist += 1
-            dic[k].append(ss)
-        dic[k].append('Frequency:')
-        dic[k].append(freq)
+            table_dic[k].append(ss)
+        table_dic[k].append('Frequency:')
+        table_dic[k].append(freq)
         if freq == 0:
             freq0.append(k)
         if badcutterlist == 0:
             if freq != 0:
-                dic[k].append('This is a good enzyme!')
+                table_dic[k].append('This is a good enzyme!')
         badcutterlist = 0
         pattern = ''
         freq = 0
-    return dic, 'List of noncutters: ', freq0, accession
+    return table_dic, 'List of noncutters: ', freq0, accession
