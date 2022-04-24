@@ -79,7 +79,7 @@ def ntCoding_region(accession):
     Function that will interact with a Blayer coding_region function that takes accession_id, 
     nt_seq[string], codon_start[int], exon_boundaries[list of int tuples] from the DBlayer and 
     returns string of nt_seq with brackets indicating coding regions e.g. ATC{TGTGTCC}ATGTT, 
-    extracted coding region & corresponding accession_id
+    extracted coding region, corresponding accession_id & a list of coding boundaries.
     """
     return bl.coding_region(accession)
 
