@@ -16,6 +16,7 @@ import config
 import os
 import operator
 import re
+from collections import defaultdict
 
 def coding_region(accession):
     '''
@@ -83,7 +84,7 @@ def coding_region(accession):
         extractedCoding_region = complement_seq
     elif complement == 'N':
         extractedCoding_region = t
-    return coding_highlighted, extractedCoding_region, accession, d_coding
+    return coding_highlighted, extractedCoding_region, accession, complement, d_coding
 
 def aa_nt(accession):
     """
@@ -106,7 +107,7 @@ def aa_nt(accession):
     for s in aaseq_stop:
         aminoacids.append(s)
     zipped = list(zip(nt_triplets, aminoacids))
-    return zipped, accession
+    return zipped, nt_triplets, accession
 
 def enz_table(accession):
     """
@@ -183,3 +184,43 @@ def enz_table(accession):
         pattern = ''
         freq = 0
     return table_dic, 'List of noncutters: ', freq0, accession
+
+
+def getAllCodingRegions():
+    """
+
+    """
+    from businesslayer import coding_region, aa_nt
+
+    db_out = {}
+    d = defaultdict(int)
+    final_list = []
+    all_triplets = []
+    allFreq_values = []
+    unique_triplets = []
+    source = db.getAllCodingRegions()
+    for entry in source:
+        db_out.update(entry)
+
+        for k, v in db_out.items():
+            #if k == 'Translation':
+             #   if v == b'No Protein Product':
+              #      break
+            if k == 'Accession':
+                accession_id = str(v).strip('\'')
+                return_result = bl.coding_region(accession_id)
+                final_list.append(return_result[1:3])
+                coding_triplets = bl.aa_nt(accession_id)
+                all_triplets.append(coding_triplets[1])
+    for i in all_triplets:
+        d[i] += 1
+    length_alltriplets = len(all_triplets)
+    for k, v in sorted(d.items(), key=operator.itemgetter(0)):
+        unique_triplets.append(k)
+        allfreq_value = str(round((v/length_alltriplets)*100, 3))
+        allFreq_values.append(allfreq_value)
+    zipped3 = list(zip(unique_triplets, allFreq_values)
+                   
+    return final_list, zipped3
+    
+        
