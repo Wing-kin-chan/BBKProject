@@ -6,13 +6,16 @@ TT
 
 import sys
 sys.path.insert(0, "../db")
+sys.path.insert(0, "../bl")
 sys.path.insert(0, "../")
 
 
 import dbapi as db
+import businesslayer as bl
 import config
 import os
-
+import operator
+import re
 
 def coding_region(accession):
     '''
@@ -86,7 +89,7 @@ def aa_nt(accession):
     """
     
     """
-    import businesslayer as bl
+    
     from businesslayer import coding_region
     db_output = {}
     d_coding = {}
@@ -104,3 +107,9 @@ def aa_nt(accession):
         aminoacids.append(s)
     zipped = list(zip(nt_triplets, aminoacids))
     return zipped, accession
+
+def enz_table(accession)
+    """
+    
+    """
+    

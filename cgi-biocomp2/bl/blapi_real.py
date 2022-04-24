@@ -16,6 +16,7 @@ Tiina Talts
 # and the directory above to import the config file
 import sys
 sys.path.insert(0, "../db")
+sys.path.insert(0, "../bl")
 sys.path.insert(0, "../")
 
 import dbapi   # Import the database api
@@ -112,13 +113,16 @@ def chrom10Codon_freq():
     """
     return("['gug', 4.321]['aag', 4.321]['gag', 4.012]['gau', 3.704]['aaa', 3.704]['cug', 3.704]['gcc', 3.704]['cag', 3.395]['gaa', 3.086]['cca', 3.086]['aau', 2.778]['uug', 2.778]['aac', 2.469]['uau', 2.16]['uuc', 2.16]['auu', 2.16]['uac', 2.16]['ccu', 1.852]['uuu', 1.852]['guu', 1.852]['cga', 1.852]['gac', 1.852]['ugu', 1.543]['guc', 1.543]['gga', 1.543]['ggc', 1.543]['gca', 1.543]['gcu', 1.543]['cau', 1.543]['auc', 1.543]['cuu', 1.543]['ucc', 1.543]['cuc', 1.543]['aug', 1.235]['acc', 1.235]['cgc', 1.235]['aga', 1.235]['uca', 1.235]['cac', 0.926]['agu', 0.926]['ucu', 0.926]['aua', 0.926]['ugg', 0.926]['ugc', 0.926]['cua', 0.926]['ggg', 0.926]['ggu', 0.617]['uua', 0.617]['agc', 0.617]['acu', 0.617]['agg', 0.617]['ccg', 0.617]['ucg', 0.309]['gcg', 0.309]['caa', 0.309]['gua', 0.309]['aca', 0.309]['acg', 0.309]['cgu', 0.309]['ccc', 0.309]['uaa', 0.309], ['uag', 0.009]['uga', 0.009]['cgg', 0.009]")
 
-def restr_enz():
+def restr_enz(accession):
     """
-    Function that will interact with Blayer functions that result and return nt_coding_region 
-    (see def above) with added enzyme sites into the string where the enzyme cuts in the sequence. 
-    Takes Enzyme restriction site information from the DB? or from a file? Returns also string list 
-    of noncutters and accession_id. Sites outside of the coding region or the good sites are 
-    indicated with double asterisk '**Enz**'; Unique sites are indicated: '*&Enz&* and good unique sites: '*&*Enz*&*'.
+    Function that will interact with Blayer functions that return a dictionary of list of restriction
+    enzyme cutting information that includes enzyme name; cutting site; cutting site length; cutting
+    'offset' or positition within the cutting site where the enzyme cuts; cut positions across the
+    enrty nucleotide sequence - non-coding region and coding region; cutting frequency; and a flag
+    'This is a good enzyme!' if the cutting position is located outside of the coding region: either
+    before the start of the first coding region and/or after the end of the last coding region.
+    The enzyme list consists of New England Biolabs (NEB) high fidelity (HF) sticky-end restriction 
+    enzymes that includes EcoRI, BamHI and BsuMI as XhoI its prototype.   
     """
-    return 
+    return bl.enz_table(accession)
 
