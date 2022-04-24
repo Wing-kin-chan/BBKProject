@@ -32,7 +32,7 @@ def coding_region(accession):
     #For highlighting the coding region:
     coding_highlighted = ''
     s2 = ''
-    i = 0
+    i = 1
     beginning = []
     end = []
     for k, v in db_output.items():
@@ -49,7 +49,7 @@ def coding_region(accession):
             if u == l - i:
                 coding_highlighted += '{'
         for e in end:
-            if u == e - i:
+            if u == e:
                 coding_highlighted += '}'
         else:
             coding_highlighted += n
@@ -83,7 +83,7 @@ def coding_region(accession):
         extractedCoding_region = complement_seq
     elif complement == 'N':
         extractedCoding_region = t
-    return coding_highlighted, extractedCoding_region, accession
+    return coding_highlighted, extractedCoding_region, accession, d_coding
 
 def aa_nt(accession):
     """
@@ -108,8 +108,78 @@ def aa_nt(accession):
     zipped = list(zip(nt_triplets, aminoacids))
     return zipped, accession
 
-def enz_table(accession)
+def enz_table(accession):
     """
     
     """
+    enzyme_file = '../NEB_HF_restr_enz.txt'
     
+    from businesslayer import coding_region
+    
+    dic = {}
+    enzyme = []
+    restr_site = []
+    site_length = []
+    cutting_offset = []
+
+    with open(enzyme_file, 'r') as f:
+        file = f.read().splitlines() 
+    for i in file:
+        enzyme.append(i.split('=')[0])
+        site = i.split('=')[1]
+        restr_site.append(site)
+        site_len = len(site)
+        site_length.append(site_len)
+        cutting_offset = int(i.split('=')[2])
+        dic[i.split('=')[0]] = ['Site:', site, 'Site_len:', site_len, 'Cutting_offset:', cutting_offset, 'Cut position(s):']
+        site_len = 0
+    
+    boundaries0 = []
+    coding_Seq = bl.coding_region(accession)
+    coding_ntSeq = coding_Seq[1]
+
+    d_coding = {}
+    source = bl.coding_region(accession) 
+    d_coding.update(source[3])
+    for x, y in d_coding.items():
+        boundaries0.append(int((str(y).split(':'))[0]))
+        boundaries0.append(int((str(y).split(':'))[1]))
+        coding_beginning = min(boundaries0)
+        coding_end = max(boundaries0)
+        boundaries = [coding_beginning, coding_end]
+  
+    freq0 = []
+    degen = 'RYSWKMBDHVN'
+    pattern = ''
+    freq = 0
+    badcutterlist = 0
+    for k, v in dic.items():
+        for nucleotide in v[1]:
+            if nucleotide in degen:
+                if nucleotide == 'R':
+                    pattern += '[AG]'
+                elif nucleotide == 'Y':
+                    pattern += '[CT]'
+                elif nucleotide == 'W':
+                    pattern += '[AT]'
+                elif nucleotide == 'N':
+                    pattern += '[ATCG]'
+            else:
+                pattern += nucleotide
+        for match in re.finditer(pattern, coding_ntSeq):
+            ss = match.start() + v[5]
+            freq += 1
+            if boundaries[0] <= ss <= boundaries[1]:
+                badcutterlist += 1
+            dic[k].append(ss)
+        dic[k].append('Frequency:')
+        dic[k].append(freq)
+        if freq == 0:
+            freq0.append(k)
+        if badcutterlist == 0:
+            if freq != 0:
+                dic[k].append('This is a good enzyme!')
+        badcutterlist = 0
+        pattern = ''
+        freq = 0
+    return dic, 'List of noncutters: ', freq0, accession
