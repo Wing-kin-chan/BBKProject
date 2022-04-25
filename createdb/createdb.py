@@ -26,6 +26,7 @@ reading_frames = list()
 complement = list()
 partial_CDS_records = 0
 overlapping_records = 0
+no_translations = 0
 
 #Define regex for parsing coding regions
 cds_search = re.compile(r'[0-9]+:[0-9]+') 
@@ -48,6 +49,11 @@ for record in GBparser.parse('chrom_CDS_10.gb'):
         print(f'Omitting {accession}: External CDS join')
         overlapping_records += 1
         continue
+    #Skip entry due to no protein translation
+    if 'translation' not in [feature.key for feature in record.features['CDS']['qualifiers'][0]]:
+        print(f'Omitting {accession}: No protein translation')
+        no_translations += 1
+        continue
     #If CDS feature of entry is valid, append record
     else:
         #Check if CDS is reverse complement:
@@ -69,7 +75,7 @@ for record in GBparser.parse('chrom_CDS_10.gb'):
         sequences.append(record.sequence)
         reading_frames.append([feature for feature in record.features['CDS']['qualifiers'][0] if feature.key == 'codon_start'][0].value)
         
-        if 'map' in  [feature.key for feature in record.features['source']['qualifiers'][0]]:
+        if 'map' in [feature.key for feature in record.features['source']['qualifiers'][0]]:
             location = [feature for feature in record.features['source']['qualifiers'][0] if feature.key == 'map'][0].value
         else:
             location = [feature for feature in record.features['source']['qualifiers'][0] if feature.key == 'chromosome'][0].value
@@ -81,14 +87,12 @@ for record in GBparser.parse('chrom_CDS_10.gb'):
             proteinproduct = ''
         protein_products.append(proteinproduct)
         
-        if 'translation' in [feature.key for feature in record.features['CDS']['qualifiers'][0]]:
-            translation = [feature for feature in record.features['CDS']['qualifiers'][0] if feature.key == 'translation'][0].value
-        else:
-            translation = 'No Protein Product'
+        translation = [feature for feature in record.features['CDS']['qualifiers'][0] if feature.key == 'translation'][0].value
         translations.append(translation)
 
 print(f'Partial CDS Records Omitted: {partial_CDS_records}')
 print(f'Overlapping Records Omitted: {overlapping_records}')
+print(f'Entries With No Translations Omitted: {no_translations}')
 
 #Import dependencies
 import pymysql
@@ -158,4 +162,5 @@ else:
 
 connection.commit()   
 cursor.close()
+
 
