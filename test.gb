@@ -1,72 +1,42 @@
-LOCUS       X67491                  2679 bp    DNA     linear   PRI 23-OCT-2008
-DEFINITION  H.sapiens gene for glutamate dehydrogenase.
-ACCESSION   X67491
-VERSION     X67491.1  GI:31822
-KEYWORDS    GLUDP5 gene; glutamate dehydrogenase.
+LOCUS       AF044311                4606 bp    DNA     linear   PRI 29-JUL-1998
+DEFINITION  Homo sapiens gamma-synuclein gene, complete cds.
+ACCESSION   AF044311
+VERSION     AF044311.1  GI:3347841
+KEYWORDS    .
 SOURCE      Homo sapiens (human)
   ORGANISM  Homo sapiens
             Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
             Mammalia; Eutheria; Euarchontoglires; Primates; Haplorrhini;
             Catarrhini; Hominidae; Homo.
-REFERENCE   1
-  AUTHORS   Tzimagiorgis,G., Leversha,M.A., Chroniary,K., Goulielmos,G.,
-            Sargent,C.A., Ferguson-Smith,M. and Moschonas,N.K.
-  TITLE     Structure and expression analysis of a member of the human
-            glutamate dehydrogenase (GLUD) gene family mapped to chromosome
-            10p11.2
-  JOURNAL   Hum. Genet. 91 (5), 433-438 (1993)
-   PUBMED   8314555
-REFERENCE   2  (bases 1 to 2679)
-  AUTHORS   Moschonas,N.K.
+REFERENCE   1  (bases 1 to 4606)
+  AUTHORS   Lavedan,C., Leroy,E., Dehejia,A., Buchholtz,S., Dutra,A.,
+            Nussbaum,R.L. and Polymeropoulos,M.H.
+  TITLE     Identification, localization and characterization of the human
+            gamma-synuclein gene
+  JOURNAL   Hum. Genet. 103 (1), 106-112 (1998)
+   PUBMED   9737786
+REFERENCE   2  (bases 1 to 4606)
+  AUTHORS   Lavedan,C.
   TITLE     Direct Submission
-  JOURNAL   Submitted (22-JUL-1992) N.K. Moschonas, Inst. of Molecular Biol.&
-            Biotechnology, Forth Dept. of Biology, Univ. of Crete, P.O. Box
-            1527 GR-711 10, Heraklion/Crete, GREECE
+  JOURNAL   Submitted (23-JAN-1998) NHGRI/LGDR, NIH, 49 Convent Drive,
+            Bethesda, MD 20892, USA
 FEATURES             Location/Qualifiers
-     source          1..2679
+     source          1..4606
                      /organism="Homo sapiens"
                      /mol_type="genomic DNA"
                      /db_xref="taxon:9606"
                      /chromosome="10"
-                     /map="p11.2"
-                     /clone="cHG1"
-                     /tissue_type="placenta"
-                     /clone_lib="Human placenta cosmid"
-                     /dev_stage="perinatal period"
-     repeat_region   822..832
-                     /experiment="experimental evidence, no additional details
-                     recorded"
-                     /rpt_type=DIRECT
-     misc_feature    838..2134
-                     /experiment="experimental evidence, no additional details
-                     recorded"
-                     /note="region of homology with the GLUD cDNA"
-     gene            838..897
-                     /gene="GLUDP5"
-     CDS             838..897
-                     /gene="GLUDP5"
-                     /EC_number="1.4.1.3"
-                     /note="Protein sequence is in conflict with the conceptual
-                     translation"
+                     /map="10q23; between markers WI-5226 and AFM225YD12"
+     mRNA            join(1..173,988..1029,1356..1483,3953..4024,4314..4606)
+                     /product="gamma-synuclein"
+     5'UTR           1..52
+     CDS             join(53..173,988..1029,1356..1483,3953..4024,4314..4334)
                      /codon_start=1
-                     /product="glutamate dehydrogenase (NAD(P)+)"
-                     /protein_id="CAA47830.1"
-                     /db_xref="GI:1335082"
-                     /db_xref="GDB:119994"
-                     /db_xref="GOA:P00367"
-                     /db_xref="HGNC:4335"
-                     /db_xref="InterPro:IPR006095"
-                     /db_xref="InterPro:IPR006096"
-                     /db_xref="InterPro:IPR006097"
-                     /db_xref="InterPro:IPR016040"
-                     /db_xref="PDB:1L1F"
-                     /db_xref="PDB:1NR1"
-                     /db_xref="UniProtKB/Swiss-Prot:P00367"
-                     /translation="VNAIEKVFKVYNEAGVTFT"
-     misc_feature    2135..2433
-                     /note="Alu-like sequence"
-     repeat_region   2468..2478
-                     /experiment="experimental evidence, no additional details
-                     recorded"
-                     /rpt_type=DIRECT
+                     /product="gamma-synuclein"
+                     /protein_id="AAC27738.1"
+                     /db_xref="GI:3347842"
+                     /translation="MDVFKKGFSIAKEGVVGAVEKTKQGVTEAAEKTKEGVMYVGAKT
+                     KENVVQSVTSVAEKTKEQANAVSEAVVSSVNTVATKTVEEAENIAVTSGVVRKEDLRP
+                     SAPQQEGVASKEKEEVAEEAQSGGD"
+     3'UTR           4335..4606
 //

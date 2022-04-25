@@ -224,10 +224,10 @@ class GenBank:
         annotation = ''
         for line in record:
             header = line[:self.GB_ANNOT_INDENT]
-            if header != self.GB_ANNOT_SPACE and header not in self.GB_REFERENCE_HEADERS and not any(char.isdigit() for char in header):
+            if header != self.GB_ANNOT_SPACE and header not in self.GB_REFERENCE_HEADERS and not header[:self.GB_SEQ_START].strip().isdigit():
                 new_annotation = True
             else:
-                new_annotation = False
+                new_annotation = False               
             if new_annotation and annotation != '':
                 yield annotation
                 annotation = line
@@ -238,7 +238,7 @@ class GenBank:
                     annotation += ' ' + line[self.GB_ANNOT_INDENT:]
                 if header in self.GB_REFERENCE_HEADERS:
                     annotation += line
-                elif any(char.isdigit() for char in header):
+                elif header[:self.GB_SEQ_START].strip().isdigit():
                     annotation += line[self.GB_SEQ_START:].replace(" ", "").upper()
         
     def annotation_feeder(self, line):
@@ -320,10 +320,10 @@ class GenBank:
         if header[:self.GB_ANNOT_INDENT] == 'FEATURES    ':
             pass
         
-        if header[:self.GB_FEATR_INDENT] == self.GB_FEATR_SPACE and not any(char.isdigit() for char in header):
+        if header[:self.GB_FEATR_INDENT] == self.GB_FEATR_SPACE and not header[:self.GB_SEQ_START].strip().isdigit():
             feature_name = line.split()[0]
             
-            location_str = str()
+            location_str = ''
             if 'complement' in line.split()[1]:
                 direction = '(-)'
             else:
