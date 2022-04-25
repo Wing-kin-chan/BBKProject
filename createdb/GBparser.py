@@ -127,13 +127,13 @@ class Feature:
             feature_str += self.type + ', ' + self.key + ': ' + self.value
         return feature_str
     
-    '''def __repr__(self):
+    def __repr__(self):
         feature_repr = ''
         if self.type == 'location':
-            feature_str += self.type + ': ' + self.value
+            feature_repr += self.value
         elif self.type == 'qualifier':
-            feature_str += self.type + ', ' + self.key + ': ' + self.value
-        return feature_repr'''
+            feature_repr += self.key + ': ' + self.value
+        return feature_repr
         
 
 class GenBank:
@@ -169,13 +169,13 @@ class GenBank:
         Not to be used on its own
         
         >>> input = ['ACCESSION AB0238483', 'DEFINITION', '//',
-        ...     'LOCUS XXXXX XXXXXXX 19-MAR-2008', 'ACCESSION AB0238483', 'DEFINITION', '//',
-        ...     'LOCUS XXXXX XXXXXXX 19-MAR-2011', 'ACCESSION Y47293233', 'DEFINITION', '//']
+        ...     'LOCUS       AB0238483      19-MAR-2008', 'ACCESSION AB0238483', 'DEFINITION', '//',
+        ...     'LOCUS       Y47293233      23-DEC-2011', 'ACCESSION Y47293233', 'DEFINITION', '//']
         
-        >>> for record in GenBank().strip_records(input)
+        >>> for record in GenBank().strip_records(input):
         ...     print(record)
-        ['LOCUS XXXXX XXXXXXX 19-MAR-2008', 'ACCESSION AB0238483', 'DEFINITION', '//']
-        ['LOCUS XXXXX XXXXXXX 19-MAR-2011', 'ACCESSION Y47293233', 'DEFINITION', '//']
+        ['LOCUS       AB0238483      19-MAR-2008', 'ACCESSION AB0238483', 'DEFINITION', '//']
+        ['LOCUS       Y47293233      23-DEC-2011', 'ACCESSION Y47293233', 'DEFINITION', '//']
         '''
         record = list()
         found_start = False
@@ -210,6 +210,7 @@ class GenBank:
         Sub routine function
         Many GenBank features and annotations span multiple lines. This function iterates through a record returned by strip_records,
         checks if the header of such has changed and if not, condenses the lines into a single string for parsing to the appropriate class.
+        Not to be used on its own.
         
         >>> input = ['LOCUS       XXXXX XXXXXXX 19-MAR-2011', 
         ...     'ACCESSION   Y47293233', 
@@ -244,7 +245,25 @@ class GenBank:
     def annotation_feeder(self, line):
         '''
         Sub routine function
-        Reads condensed lines from condense function, and extracts data to be passed onto the record updater.
+        Reads condensed lines from condense function, extracts and returns data to be passed onto the record updater.
+        Not to be used on its own.
+        
+        >>> locus = 'LOCUS       AB009903                 268 bp    DNA     linear   PRI 14-APR-2000'
+        >>> definition = 'DEFINITION  Homo sapiens gene for PTEN/MMAC1, partial cds'
+        >>> accession = 'ACCESSION   AB009903'
+        >>> geneID = 'VERSION     AB009903.1  GI:2723417'
+        >>> keywords = 'KEYWORDS    PTEN/MMAC1.'
+        
+        >>> GenBank().annotation_feeder(locus)
+        ('LOCUS', '268bp', 'DNA', '14-APR-2000')
+        >>> GenBank().annotation_feeder(definition)
+        ('DEFENITION', 'Homo sapiens gene for PTEN/MMAC1, partial cds')
+        >>> GenBank().annotation_feeder(accession)
+        ('ACCESSION', ['AB009903'])
+        >>> GenBank().annotation_feeder(geneID)
+        ('GENEID', '2723417')
+        >>> GenBank().annotation_feeder(keywords)
+        ('KEYWORDS', 'PTEN/MMAC1.')
         '''
         header = line[:self.GB_ANNOT_INDENT]
         if header == 'LOCUS       ':
@@ -359,3 +378,5 @@ def parse(handle):
         for line in GenBank().condense(record):
             output.update(GenBank().annotation_feeder(line))
         yield output
+
+doctest.testmod()
