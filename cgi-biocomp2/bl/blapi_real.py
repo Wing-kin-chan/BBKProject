@@ -105,13 +105,12 @@ def entryCodon_freq():
 
 def chrom10Codon_freq():
     """
-    RETURNS DUMMY DATA
-    Function that will interact with a Blayer function4 that takes all 
-    available chromosome10 accession_id's in the DB, extract data needed from a 
-    function1 (see above) which is similar to def nt_coding and returns a list of 
-    freq per codon per all entries as float (%) - can be completed once and saved as static values in a file
+    Function that will interact with a Blayer function codonFreq_chromosome10 that takes all 
+    available chromosome10 accession_id's in the DB using getAllCodingRegions, extract data needed from a 
+    function aa_nt (see above) and returns a list of tuples: codon, freq per codon per all entries as float (%)
+     - can be completed once and saved as static values in a file: overallcodonfreqs.txt
     """
-    return("['gug', 4.321]['aag', 4.321]['gag', 4.012]['gau', 3.704]['aaa', 3.704]['cug', 3.704]['gcc', 3.704]['cag', 3.395]['gaa', 3.086]['cca', 3.086]['aau', 2.778]['uug', 2.778]['aac', 2.469]['uau', 2.16]['uuc', 2.16]['auu', 2.16]['uac', 2.16]['ccu', 1.852]['uuu', 1.852]['guu', 1.852]['cga', 1.852]['gac', 1.852]['ugu', 1.543]['guc', 1.543]['gga', 1.543]['ggc', 1.543]['gca', 1.543]['gcu', 1.543]['cau', 1.543]['auc', 1.543]['cuu', 1.543]['ucc', 1.543]['cuc', 1.543]['aug', 1.235]['acc', 1.235]['cgc', 1.235]['aga', 1.235]['uca', 1.235]['cac', 0.926]['agu', 0.926]['ucu', 0.926]['aua', 0.926]['ugg', 0.926]['ugc', 0.926]['cua', 0.926]['ggg', 0.926]['ggu', 0.617]['uua', 0.617]['agc', 0.617]['acu', 0.617]['agg', 0.617]['ccg', 0.617]['ucg', 0.309]['gcg', 0.309]['caa', 0.309]['gua', 0.309]['aca', 0.309]['acg', 0.309]['cgu', 0.309]['ccc', 0.309]['uaa', 0.309], ['uag', 0.009]['uga', 0.009]['cgg', 0.009]")
+    return bl.codonFreq_chromosome10()
 
 def restr_enz(accession):
     """
