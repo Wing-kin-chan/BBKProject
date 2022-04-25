@@ -228,7 +228,8 @@ def codonFreq_chromosome10():
                 return_result = bl.aa_nt(accession_id)
                 coding_triplets = return_result[1]
                 for codon in coding_triplets:
-                    all_triplets.append(codon)
+                    codon_u = codon.replace('T', 'U')
+                    all_triplets.append(codon_u)
     for i in all_triplets:
         d[i] += 1
     length_alltriplets = len(all_triplets)
