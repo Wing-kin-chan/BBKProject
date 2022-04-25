@@ -32,58 +32,58 @@ def coding_region(accession):
                     d_coding.update(v)
     #For highlighting the coding region:
     coding_highlighted = ''
-    s2 = ''
-    i = 1
+    the_sequence = ''
+    shift = 1
     beginning = []
     end = []
     for k, v in db_output.items():
         if k == 'Sequence':
-            s1 = str(v).split('\'')
-            s2 = str(s1[1])
+            seq = str(v).split('\'')
+            the_sequence = str(seq[1])
         if k == 'Complement':
             complement = str(v).strip()
     for k, v in d_coding.items():
         beginning.append(int((str(v).split(':'))[0]))
         end.append(int((str(v).split(':'))[1]))
-    for u, n in enumerate(s2):
-        for l in beginning:
-            if u == l - i:
+    for nt_index, nts in enumerate(the_sequence):
+        for b in beginning:
+            if nt_index == b - shift:
                 coding_highlighted += '{'
         for e in end:
-            if u == e:
+            if nt_index == e:
                 coding_highlighted += '}'
         else:
-            coding_highlighted += n
-    i += 2
+            coding_highlighted += nts
+    shift += 2
     #For extracting the coding region:
-    t = ''
-    j = ''
-    p = 2
+    coding_seq = ''
+    noncoding_seq = ''
+    base_correction = 2
     complement_nts = ''
     for k, v in d_coding.items():
         start = int((str(v).split(':'))[0])
         stop = int((str(v).split(':'))[1])
-        for u, n in enumerate(s2):
-            if u > start - p:
-                if u < stop:
-                    t += n
+        for nt_index, nts in enumerate(the_sequence):
+            if nt_index > start - base_correction:
+                if nt_index < stop:
+                    coding_seq += nts
             else:
-                j += n
+                noncoding_seq += nts
     if complement == 'Y':
-        for s in t:
-            if s == 'G':
+        for nt in coding_seq:
+            if nt == 'G':
                 complement_nts += 'C'
-            elif s == 'C':
+            elif nt == 'C':
                 complement_nts += 'G'
-            elif s == 'A':
+            elif nt == 'A':
                 complement_nts += 'T'
-            elif s == 'T':
+            elif nt == 'T':
                 complement_nts += 'A'
         complement_seq = complement_nts[::-1]
     if complement == 'Y':
         extractedCoding_region = complement_seq
     elif complement == 'N':
-        extractedCoding_region = t
+        extractedCoding_region = coding_seq
     return coding_highlighted, extractedCoding_region, accession, complement, d_coding
 
 def aa_nt(accession):
