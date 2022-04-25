@@ -190,11 +190,31 @@ def getAllCodingRegions():
     """
 
     """
-    from businesslayer import coding_region, aa_nt
+    from businesslayer import coding_region
+
+    db_out = {}
+    final_list = []
+    source = db.getAllCodingRegions()
+    for entry in source:
+        db_out.update(entry)
+
+        for k, v in db_out.items():
+            if k == 'Accession':
+                accession_id = str(v).strip('\'')
+                return_result = bl.coding_region(accession_id)
+                final_list.append(return_result[1:3])
+                   
+    return final_list
+
+
+def codonFreq_chromosome10():
+    """
+
+    """
+    from businesslayer import aa_nt
 
     db_out = {}
     d = defaultdict(int)
-    final_list = []
     all_triplets = []
     allFreq_values = []
     unique_triplets = []
@@ -203,15 +223,13 @@ def getAllCodingRegions():
         db_out.update(entry)
 
         for k, v in db_out.items():
-            #if k == 'Translation':
-             #   if v == b'No Protein Product':
-              #      break
             if k == 'Accession':
                 accession_id = str(v).strip('\'')
-                return_result = bl.coding_region(accession_id)
-                final_list.append(return_result[1:3])
-                coding_triplets = bl.aa_nt(accession_id)
-                all_triplets.append(coding_triplets[1])
+                return_result = bl.aa_nt(accession_id)
+                coding_triplets = return_result[1]
+                for codon in coding_triplets:
+                    codon_u = codon.replace('T', 'U')
+                    all_triplets.append(codon_u)
     for i in all_triplets:
         d[i] += 1
     length_alltriplets = len(all_triplets)
@@ -219,8 +237,12 @@ def getAllCodingRegions():
         unique_triplets.append(k)
         allfreq_value = str(round((v/length_alltriplets)*100, 3))
         allFreq_values.append(allfreq_value)
-    zipped3 = list(zip(unique_triplets, allFreq_values)
+        
+    zipped3 = list(zip(unique_triplets, allFreq_values))
                    
-    return final_list, zipped3
+    return zipped3
+
+
+
     
         
