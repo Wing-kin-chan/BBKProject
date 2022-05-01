@@ -48,6 +48,7 @@ import config
 import os
 import operator
 import re
+import ast
 from collections import defaultdict
 
 #*************************************************************************
@@ -362,7 +363,8 @@ def codonFreq_entry(accession):
 
     with open(codonfreq_file, 'r') as f:
         file = f.read()
-        
+        data = ast.literal_eval(file)
+        d_chromFreq.update(data)
     
     for item in return_aaNt:
         d_entryFreq[item[0]] = [item[1]]
@@ -372,6 +374,10 @@ def codonFreq_entry(accession):
     for codon, v in d.items():
         entryFreq_value = round((v/length_entryCodons)*100, 3)
         d_entryFreq[codon].append(entryFreq_value)
+    for k, v in d_chromFreq.items():
+        for codon, value in d_entryFreq.items():
+            if k == codon:
+                d_entryFreq[codon].append(v)    
                    
     return d_entryFreq
 
