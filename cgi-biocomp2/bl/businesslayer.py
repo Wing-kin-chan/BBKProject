@@ -155,6 +155,7 @@ def aa_nt(accession):
     source = db.getAccession(accession)
     db_output.update(source)
     aminoacids = []
+    u_triplets = []
     for k, v in db_output.items():
         if k == 'Translation':
             aa_seq = str(v).replace('b\'','').replace(' ', '').replace('\'', '')
@@ -164,10 +165,14 @@ def aa_nt(accession):
     coding_Seq = bl.coding_region(accession)
     coding_ntSeq = coding_Seq[1]
     nt_triplets = [coding_ntSeq[i:i + 3] for i in range(0, len(coding_ntSeq), 3)]
+    for l in nt_triplets:
+        codon_u = l.replace('T', 'U')
+        u_triplets.append(codon_u)
     for s in aaseq_stop:
         aminoacids.append(s)
-    zipped = list(zip(nt_triplets, aminoacids))
-    return zipped, nt_triplets, accession
+    zipped1 = list(zip(nt_triplets, aminoacids))
+    zipped2 = list(zip(u_triplets, aminoacids))
+    return zipped1, nt_triplets, accession, zipped2, u_triplets
 
 def enz_table(accession):
     """
@@ -331,7 +336,7 @@ def codonFreq_chromosome10():
     for i in all_triplets:
         d[i] += 1
     length_alltriplets = len(all_triplets)
-    for k, v in sorted(d.items(), key=operator.itemgetter(0)):
+    for k, v in d.items():
         unique_triplets.append(k)
         allfreq_value = str(round((v/length_alltriplets)*100, 3))
         allFreq_values.append(allfreq_value)
@@ -344,6 +349,31 @@ def codonFreq_entry(accession):
     """
     """
     
+    from businesslayer import codonFreq_chromosome10, aa_nt
+
+    codonfreq_file = "../bl/overallcodonfreqs.txt"
+    
+    d = defaultdict(int)
+    d_entryFreq = {}
+    d_chromFreq = {}
+    source = bl.aa_nt(accession)
+    return_aaNt = source[3]
+    u_triplets = source[4]
+
+    with open(codonfreq_file, 'r') as f:
+        file = f.read()
+        
+    
+    for item in return_aaNt:
+        d_entryFreq[item[0]] = [item[1]]
+    for i in u_triplets:
+        d[i] += 1
+    length_entryCodons = len(return_aaNt)
+    for codon, v in d.items():
+        entryFreq_value = round((v/length_entryCodons)*100, 3)
+        d_entryFreq[codon].append(entryFreq_value)
+                   
+    return d_entryFreq
 
     
         
