@@ -1,9 +1,41 @@
 #!/usr/bin/python3
-'''
-TT
-'''
+"""
+Program:    businesslayer
+File:       businesslayer.py
 
+Version:    V1.0
+Date:       01.05.22
+Function:   Obtain data stored in the database (DB) layer by calling the DB API
+            functions and use the data in the functions to modify and calculate
+            data to return for various tasks and searches for the FE
 
+Copyright:  (c) Tiina Talts, MSc Student, Birkbeck UL, 2022
+Author:     Tiina Talts
+Address:    Institute of Structural and Molecular Biology
+            Birkbeck University of London
+
+--------------------------------------------------------------------------
+Description:
+============
+Obtain data stored in the database (DB) layer by calling the DB API
+functions and use the data in the functions to modify and calculate
+data to return for various tasks and searches for the FE.
+The various tasks that the code performs include:
+-- return the complete DNA sequence with the coding regions specified
+-- return the amino acid sequence with the coding DNA sequence
+-- return codon usage frequencies within the coding region
+-- return the overall codon usage within the chromoseme 10
+-- return sticky-end restriction enzyme sites in the genomic DNA - i.e. in
+   both coding and non-coding regions
+
+--------------------------------------------------------------------------
+Revision History:
+=================
+V1.0   01.05.22   Original   By: TT
+"""
+
+#*************************************************************************
+# Import libraries
 import sys
 sys.path.insert(0, "../db")
 sys.path.insert(0, "../bl")
@@ -18,10 +50,23 @@ import operator
 import re
 from collections import defaultdict
 
+#*************************************************************************
+
+
+
+
 def coding_region(accession):
-    '''
-    
-    '''
+    """
+    For highlighting and extracting the coding region per entry.
+
+    Input:  result       --- The result returned by dbapi getAccession function
+    Return: (coding_highlighted, extractedCoding_region, accession, complement, d_coding)
+                         --- A list containing the 'highlighted' coding region (boundaries marked
+                         by {} wirthing the original DNA sequence), extracted coding region,
+                         its respective accession identifier, complement 'Y/N', and dictionary of coding boundaries
+
+    01.05.22  Original   By: TT
+    """
 
     db_output = {}
     d_coding = {}
@@ -30,7 +75,9 @@ def coding_region(accession):
     for k, v in db_output.items():
             if k == 'Coding Regions':
                     d_coding.update(v)
-    #For highlighting the coding region:
+    #For highlighting the coding region by marking the start
+    #and end with entering '{' and/or '}' respectively
+    #into the original DNA sequence:
     coding_highlighted = ''
     the_sequence = ''
     shift = 1
@@ -55,7 +102,9 @@ def coding_region(accession):
         else:
             coding_highlighted += nts
     shift += 2
-    #For extracting the coding region:
+    #For extracting the coding region by directing
+    #the nucleotides into separate strings based on the
+    #numbering of the coding region dictionary:
     coding_seq = ''
     noncoding_seq = ''
     base_correction = 2
@@ -88,7 +137,14 @@ def coding_region(accession):
 
 def aa_nt(accession):
     """
-    
+    For returning the amino acid sequence with the coding DNA sequence.
+
+    Input:  result       --- The result returned by dbapi getAccession function
+    Return: (zipped, nt_triplets, accession)
+                         --- A list containing the nucleotide codon and amino acid letter as a tuple,
+                         nucleotide codon and its respective accession identifier
+
+    01.05.22  Original   By: TT
     """
     
     from businesslayer import coding_region
@@ -111,7 +167,16 @@ def aa_nt(accession):
 
 def enz_table(accession):
     """
-    
+    For returning the return sticky-end restriction enzyme sites in the genomic DNA - i.e. in
+    both coding and non-coding regions.
+
+    Input:  result       --- The result returned by businesslayer coding_region that in turn takes result from
+                         dbapi getAccession function
+    Return: (table_dic, 'List of noncutters: ', freq0, accession)
+                         --- A list containing the restricion enzyme cutting information as a dictionary,
+                         a list of non-cutting enzymes and its respective accession identifier
+
+    01.05.22  Original   By: TT
     """
     enzyme_file = '../NEB_HF_restr_enz.txt'
     
@@ -188,7 +253,14 @@ def enz_table(accession):
 
 def getAllCodingRegions():
     """
+    For returning all the coding regions within the database of eligible entries from the human chromoseme 10.
 
+    Input:  result       --- The result returned by dbapi getAllCodingRegions function and
+                         by businesslayer coding_region function
+    Return: (final_list) --- A list containing the extracted coding region and its respective accession identifier
+                         for all entries in the database
+
+    01.05.22  Original   By: TT
     """
     from businesslayer import coding_region
 
@@ -209,7 +281,14 @@ def getAllCodingRegions():
 
 def codonFreq_chromosome10():
     """
+    For returning the codon usage frequencies for all the eligible entries from the human chromoseme 10.
 
+    Input:  result       --- The result returned by dbapi getAllCodingRegions function and
+                         by businesslayer aa_nt function
+    Return: (zipped3)    --- A list containing the unique codons for all the extracted coding regions
+                         and its respective frequency value for all eligible entries in the human chromosome 10 database
+
+    01.05.22  Original   By: TT
     """
     from businesslayer import aa_nt
 
