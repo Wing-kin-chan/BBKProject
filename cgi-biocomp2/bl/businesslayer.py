@@ -340,7 +340,10 @@ def codonFreq_chromosome10():
                    
     return zipped3
 
-
+def codonFreq_entry(accession):
+    """
+    """
+    
 
     
         
