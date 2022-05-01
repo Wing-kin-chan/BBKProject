@@ -17,10 +17,10 @@ Address:    Institute of Structural and Molecular Biology
 --------------------------------------------------------------------------
 Description:
 ============
-Obtain data stored in the database (DB) layer by calling the DB API
-functions and use the data in the functions to modify and calculate
-data to return for various tasks and searches for the FE.
-The various tasks that the code performs include:
+This is the business logic API to obtain modified and calculated data from
+the businesslayer (BL) by calling the BL functions and return for various
+tasks and searches for the FE
+The various tasks that are called include:
 -- return the complete DNA sequence with the coding regions specified
 -- return the amino acid sequence with the coding DNA sequence
 -- return codon usage frequencies within the coding region
