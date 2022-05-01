@@ -26,34 +26,34 @@ ChromosomalLocation = form.getvalue('loc')
 
 #result = blapi_real.search
 
-html    = htmlutils.header()
-html += <head>
-html += <title>Search Results</title>
-html += </head>
-html += <p /><b>Name: </b><p />
-html += <b>Conformation: </b><p />
-html += <b>Overhang: </b><p />
-html += <b>Minimum Site Length: </b><p />
-html += <b>Maximum Number of Cuts: </b><p />
-html += <b>Included: </b><p />
-html += <b>Noncutters: </b><p />
-html += <table>
-html += <thead align = "center">
-html += <tr>
-html += <th>Name
-html += <th>Sequence
-html += <th>Site Length
-html += <th>Overhang
-html += <th>Frequency
-html += <th>Cut Positions
-html += <tbody align = "center"><TR align = "center" >
-html += <td>
-html += <td>
-html += <td>
-html += <td>
-html += <td>
-html += <td></TABLE>
-html += htmlutils.footer()
+html    = "htmlutils.header()"
+html += "<head>"
+html += "<title>Search Results</title>"
+html += "</head>"
+html += "<p /><b>Name: </b><p />"
+html += "<b>Conformation: </b><p />"
+html += "<b>Overhang: </b><p />"
+html += "<b>Minimum Site Length: </b><p />"
+html += "<b>Maximum Number of Cuts: </b><p />"
+html += "<b>Included: </b><p />"
+html += "<b>Noncutters: </b><p />"
+html += "<table>"
+html += "<thead align = "center">"
+html += "<tr>"
+html += "<th>Name"
+html += "<th>Sequence"
+html += "<th>Site Length"
+html += "<th>Overhang"
+html += "<th>Frequency"
+html += "<th>Cut Positions"
+html += "<tbody align = "center"><TR align = "center" >"
+html += "<td>"
+html += "<td>"
+html += "<td>"
+html += "<td>"
+html += "<td>"
+html += "<td></TABLE>"
+html += "htmlutils.footer()"
 
 print(html)
 
