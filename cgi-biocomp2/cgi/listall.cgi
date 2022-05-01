@@ -26,7 +26,6 @@ for entry in entries:
     html += "<a href='" + config.searchurl + "?gi=" + entry['GeneID'] + "'>"            #entry object which is a dictionary          
     html += "<a href='" + config.searchurl + "?protein=" + entry['Product'] + "'>"
     html += "<a href='" + config.searchurl + "?loc=" + entry['Locus'] + "'>"
-    html += entry + "</a>"
     html += "</td></tr>\n"
 
     
