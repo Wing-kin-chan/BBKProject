@@ -1,7 +1,14 @@
 '''
-Code for parsing GenBank files.
+Program:        GenBank Parser
+File:           GBparser.py
 
+Version:        1.0.1
+Date:           01.05.22
+Function:       Iteratively parses multi GenBank files and returns record objects that stores information
+                in a similar manner to GenBank files. 
 
+Copyright:      (c) Wing-kin Chan, Bioinformatics MSc Student, Birkbeck UoL, 2022
+Author:         Wing-kin Chan
 '''
 import re
 import doctest
@@ -137,7 +144,7 @@ class Feature:
         
 
 class GenBank:
-    '''Functions used to import and parse GenBank files'''
+    '''Sub routine methods used by the parse function to breakdown GenBank files. None of these methods are to be used as standalone functions'''
     GB_RECORD_START = 'LOCUS       '
     GB_DATE = re.compile(r'[0-9]{2}-[a-zA-Z]{3}-[0-9]{4}') 
     GB_MAX_LINE_LEN = 79
@@ -160,6 +167,7 @@ class GenBank:
     GB_RECORD_END = '//'
     
     def __init__(self):
+        '''Initialise the GenBank class of functions'''
         pass
     
     def strip_records(self, file: list):
@@ -366,9 +374,9 @@ class GenBank:
 
 def parse(handle):
     '''
-    GenBank parser method
-    
+    GenBank parser utilising methods found in the GenBank class to breakdown and read GenBank files.
     Generator object for parsing multi GenBank files yield record objects for each record within the file.
+    Note that records do not store comment annotations, or miscillaneous verbose feature qualifiers.
     '''
     with open(handle, 'r') as f:
         file = f.read().splitlines()

@@ -1,7 +1,49 @@
 #!/usr/bin/python3
 '''
-Database API for querying and returning data
-Written by Wing
+Program:        dbapi_real
+File:           dbapi_real.py
+
+Version:        1.0.2
+Date:           01.05.22
+Function:       Query the database and return information for the business layer API to process.
+                Additionally stores/caches information calculated by the business layer functions with long runtimes to
+                to improve webpage responsiveness.
+
+Copyright:      (c) Wing-kin Chan, Bioinformatics MSc Student, Birkbeck UoL, 2022
+Author:         Wing-kin Chan
+
+=========================================================================================================================================
+Description:
+    -connection:            Database connection object
+    -cursor:                PyMySQL cursor object for interacting with the database
+    -search:                Master search function that parameterizes database queries. SQL queries follow a structured format:
+                                -SELECT <item>
+                                -FROM <table>
+                                -WHERE <search parameters>
+                                -Other parameters....
+                            This function reads in the query, query type, and then builds an SQL query string accordingly 
+                            to be executed. Moreover, this function standardises the output of every query to make 
+                            downstream data handling and interactions easier. This function is called by all getXXXXXXX functions.
+    -getAllEntries:         Returns a list of summaries of all entries stored in the database; Accession, GeneID, Protein, and Locus
+    -getAccession:          Returns the record of the accession number that matches the query
+    -getByAccession:        Returns a list of summaries of all entries whose accession number is like the query. If the search returns
+                            one result, calls getAccession.
+    -getByGeneID:           Returns a list of summaries of all entries whose GeneID is like the query. If the search returns
+                            one result, calls getAccession.
+    -getByLocus:            Returns a list of summaries of all entries whose locus is like the query. If the search returns
+                            one result, calls getAccession.
+    -getByProduct:          Returns a list of summaries of all entries whose protein name is like the query. If the search returns
+                            one result, calls getAccession.
+    -updateCodingSeq:       Updates the genomic coding sequence string with introns removed of the entry, with a value calculated by 
+                            the business layer API.
+    -updateComplement:      Updates the complementary/antisense string of the sequence of the entry, with a value calculated by
+                            the business layer API.
+    -getAllCodingRegions:   Returns all codings regions stored in the database accompanied by record identifying summaries.
+=======================================================================================================================================
+Changelog:
+    v1.0.0:     Working database query functions for main search functions
+    v1.0.1:     Added updateCodingSeq and updateComplement to update entries and cache data from complex business layer API functions
+    v1.0.2:     Added getAllCodingRegions so business layer can calculate codon usage
 '''
 
 # Add the directory above to the module path to import the config file
@@ -28,6 +70,15 @@ cursor = connection.cursor()
 #To save writing repeated SQL queries of similar structure, definied a single function with arguments to query the database.
 #Each search function will parse their unique arguments to this function      
 def search(querytype: str, query: str, resultlen: int):
+    '''
+    Parameterized query function that takes inputs passed from the webpage via the business layer, and queries the database.
+    
+    Input:  querytype --Accession/GeneID/Product/Locus
+            query     --The query passed from the webpage by the business layer
+            resultlen --How many results
+    Return: If resultlen > 1, returns a list of summaries of record matching the query.
+            If resultlen == 1, returns a dictionary with all record information stored in the database.
+    '''
     cursor = connection.cursor()
     sql_selectall = 'SELECT * '
     sql_selectsummary = 'SELECT Accession, GeneID, Product, Locus '
