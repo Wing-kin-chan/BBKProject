@@ -94,14 +94,13 @@ def aaNt_seqsAligned(accession):
 
 def entryCodon_freq():
     """
-    RETURNS DUMMY DATA
-    Function that will interact with a Blayer function3 that takes accession_id, 
-    extract data needed from a function1 (see above) which is similar to def nt_coding 
-    and returns a list of freq per codon per entry as float (%), ratio  as abundance of 
-    that codon relative to all of the codons for that particular amino acid, amino acid 
-    letter code; & corresponding accession_id
+    Function that will interact with a Blayer function codonFreq_entry that takes accession_id, 
+    extract data needed from a function aa_nt and saved file with adta derived previously from function
+    codonFreq_chromosome10 and returns a list of codons for the entry, frequencies per codon per entry
+    as float (%), frequencies per codon per chromosome as float (%), corresponding amino acid 
+    letter code; & corresponding accession_id for the entry
     """
-    return('AB032150', "[('aug', 'M', '4.321','0.1'), ('gau', 'D', '4.321','0.1'), ('ucg', 'S', '4.012','0.1'), ('aaa', 'K', '3.704','0.1'), ('uau', 'Y', '3.704','0.1'), ('cag', 'Q', '3.704','0.1'), ('ugu', 'C', '3.704','0.1'), ('gug', 'V', '3.395','0.1'), ('aag', 'K', '3.086','0.1'), ('cug', 'L', '3.086','0.1'), ('aau', 'N', '2.778','0.1'), ('gau', 'D', '2.778','0.1'), ('ggu', 'G', '2.469','0.1'), ('cac', 'H', '2.16','0.1'), ('uuc', 'F', '2.16','0.1'), ('aug', 'M', '2.16','0.1'), ('ccu', 'P', '2.16','0.1'), ('guc', 'V', '1.852','0.1'), ('cug', 'L', '1.852','0.1'), ('gga', 'G', '1.852','0.1'), ('uuu', 'F', '1.852','0.1'), ('ggc', 'G', '1.852','0.1'), ('acc', 'T', '1.543','0.1'), ('uau', 'Y', '1.543','0.1'), ('gcg', 'A', '1.543','0.1'), ('ccu', 'P', '1.543','0.1'), ('gca', 'A', '1.543','0.1'), ('gag', 'E', '1.543','0.1'), ('guu', 'V', '1.543','0.1'), ('ccu', 'P', '1.543','0.1'), ('aaa', 'K', '1.543','0.1'), ('agu', 'S', '1.543','0.1'), ('aaa', 'K', '1.543','0.1'), ('gcu', 'A', '1.235','0.1'), ('uua', 'L', '1.235','0.1'), ('gag', 'E', '1.235','0.1'), ('gcc', 'A', '1.235','0.1'), ('acc', 'T', '1.235','0.1'), ('aaa', 'K', '0.926','0.1'), ('uug', 'L', '0.926','0.1'), ('gca', 'A', '0.926','0.1'), ('auu', 'I', '0.926','0.1'), ('gaa', 'E', '0.926','0.1'), ('gcu', 'A', '0.926','0.1'), ('ggc', 'G', '0.926','0.1'), ('uuc', 'F', '0.926','0.1'), ('cgc', 'R', '0.617','0.1'), ('cau', 'H', '0.617','0.1'), ('auu', 'I', '0.617','0.1'), ('gau', 'D', '0.617','0.1'), ('ucu', 'S', '0.617','0.1'), ('gcu', 'A', '0.617','0.1'), ('cau', 'H', '0.309','0.1'), ('uua', 'L', '0.309','0.1'), ('uac', 'Y', '0.309','0.1'), ('aau', 'N', '0.309','0.1'), ('aau', 'N', '0.309','0.1'), ('gag', 'E', '0.309','0.1'), ('gag', 'E', '0.309','0.1'), ('cag', 'Q', '0.309','0.1'), ('guu', 'V', '0.309','0.1')]")
+    return bl.codonFreq_entry(accession)
 
 def chrom10Codon_freq():
     """

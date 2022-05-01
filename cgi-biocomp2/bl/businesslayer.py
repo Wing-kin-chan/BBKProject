@@ -350,7 +350,7 @@ def codonFreq_entry(accession):
     """
     """
     
-    from businesslayer import codonFreq_chromosome10, aa_nt
+    from businesslayer import aa_nt
 
     codonfreq_file = "../bl/overallcodonfreqs.txt"
     
@@ -379,7 +379,7 @@ def codonFreq_entry(accession):
             if k == codon:
                 d_entryFreq[codon].append(v)    
                    
-    return d_entryFreq
+    return d_entryFreq, accession
 
     
         
