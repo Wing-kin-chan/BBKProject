@@ -348,6 +348,15 @@ def codonFreq_chromosome10():
 
 def codonFreq_entry(accession):
     """
+    For returning the codon usage frequencies for a particular entry.
+
+    Input:  result                      --- The result returned by businesslayer aa_nt function and saved file with
+                                        previously obtained data of all the codon frequencies of human chromosome 10
+    Return: (d_entryFreq, accession)    --- A dictionary containing the unique codons for the entry coding region, its
+                                        respective amino acid one letter code, codon usage frequency value per entry,
+                                        codon usage frequency value per chromosome; and respective accession identifier for the entry 
+
+    01.05.22  Original   By: TT
     """
     
     from businesslayer import aa_nt

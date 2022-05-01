@@ -1,26 +1,48 @@
 #!/usr/bin/python3
 """
-Business layer APIs
-List of function definitions to parse, and perform operations on Genbank entries from database
-and return outputs to be presented on the webpage.
+Program:    blapi_real
+File:       blapi_real.py
 
-This is the business logic API
+Version:    V1.0
+Date:       01.05.22
+Function:   This is the business logic API to obtain modified and calculated data from
+            the businesslayer (BL) by calling the BL functions and return for various
+            tasks and searches for the FE
 
-***The standardised file header will be here***
+Copyright:  (c) Tiina Talts, MSc Student, Birkbeck UL, 2022
+Author:     Tiina Talts
+Address:    Institute of Structural and Molecular Biology
+            Birkbeck University of London
 
-At present some of the functions return dummy data - please see below
-Tiina Talts
+--------------------------------------------------------------------------
+Description:
+============
+Obtain data stored in the database (DB) layer by calling the DB API
+functions and use the data in the functions to modify and calculate
+data to return for various tasks and searches for the FE.
+The various tasks that the code performs include:
+-- return the complete DNA sequence with the coding regions specified
+-- return the amino acid sequence with the coding DNA sequence
+-- return codon usage frequencies within the coding region
+-- return the overall codon usage within the chromoseme 10
+-- return sticky-end restriction enzyme sites in the genomic DNA - i.e. in
+   both coding and non-coding regions
+
+--------------------------------------------------------------------------
+Revision History:
+=================
+V1.0   01.05.22   Original   By: TT
 """
 
-# Add the bl sub-directory to the module path (for testing this routine)
-# and the directory above to import the config file
+#*************************************************************************
+# Import libraries
 import sys
 sys.path.insert(0, "../db")
 sys.path.insert(0, "../bl")
 sys.path.insert(0, "../")
 
-import dbapi   # Import the database api
-import config  # Import configuration information (if needed)
+import dbapi
+import config
 import businesslayer as bl
 
 def getAllEntries():
