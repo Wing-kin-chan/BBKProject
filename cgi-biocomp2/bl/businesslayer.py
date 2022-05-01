@@ -137,7 +137,7 @@ def coding_region(accession):
 
 def aa_nt(accession):
     """
-    For returning the amino acid sequence with the coding DNA sequence.
+    For returning the amino acid sequence with the coding nucleotide or codon sequence.
 
     Input:  result       --- The result returned by dbapi getAccession function
     Return: (zipped, nt_triplets, accession)
@@ -148,6 +148,8 @@ def aa_nt(accession):
     """
     
     from businesslayer import coding_region
+    #Extracts the amino acid sequence string via dbapi getAccession function
+    #and dictionary key 'Translation' value; adds a stop codon '*' at the end:
     db_output = {}
     d_coding = {}
     source = db.getAccession(accession)
@@ -157,6 +159,8 @@ def aa_nt(accession):
         if k == 'Translation':
             aa_seq = str(v).replace('b\'','').replace(' ', '').replace('\'', '')
             aaseq_stop = aa_seq + '*'
+    #Generates triplets for the return of the coding region function per entry,
+    #and zippes the triplets into tuples with its respective amino acid letters:
     coding_Seq = bl.coding_region(accession)
     coding_ntSeq = coding_Seq[1]
     nt_triplets = [coding_ntSeq[i:i + 3] for i in range(0, len(coding_ntSeq), 3)]
@@ -188,6 +192,8 @@ def enz_table(accession):
     site_length = []
     cutting_offset = []
 
+    #Takes the enzyme file and creates a dictionary for the list of enzymes
+    #used in this search of restirction sites for the entry:
     with open(enzyme_file, 'r') as f:
         file = f.read().splitlines() 
     for i in file:
@@ -204,6 +210,8 @@ def enz_table(accession):
     coding_Seq = bl.coding_region(accession)
     coding_ntSeq = coding_Seq[1]
 
+    #Determines the boundaries of the coding regions for the entry
+    #to help determine if enzyme is 'good' via min and max boundary number:
     d_coding = {}
     source = bl.coding_region(accession) 
     d_coding.update(source[3])
@@ -219,6 +227,12 @@ def enz_table(accession):
     pattern = ''
     freq = 0
     badcutterlist = 0
+    #Creates a pattern for each enzyme using its cutting sequence and performes a regular
+    #expression search for each pattern in the given entry sequence;
+    #takes into account degenerate bases in the enzyme cutting sequence
+    #NOTE: not all degenerate patterns are entered into the code but only the ones
+    #that feature in the enzyme list given in the enzyme file - if enzymes added into the file, the code here
+    #needs revisiting and any additional degeneracies added!:
     for k, v in table_dic.items():
         for nucleotide in v[1]:
             if nucleotide in degen:
@@ -235,13 +249,18 @@ def enz_table(accession):
         for match in re.finditer(pattern, coding_ntSeq):
             ss = match.start() + v[5]
             freq += 1
+            #Counts the bad cutters that cut within the coding boundaries:
             if boundaries[0] <= ss <= boundaries[1]:
                 badcutterlist += 1
             table_dic[k].append(ss)
         table_dic[k].append('Frequency:')
         table_dic[k].append(freq)
+        #If frequency is zero for that enzyme adds the
+        #dictionary keys or enzyme name to the non-cutter list:
         if freq == 0:
             freq0.append(k)
+        #If bad cutter list is zero and frequency is not
+        #equal to zero means this is a good enzyme that cuts outside of the coding region:
         if badcutterlist == 0:
             if freq != 0:
                 table_dic[k].append('This is a good enzyme!')

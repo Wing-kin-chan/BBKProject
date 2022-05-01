@@ -90,7 +90,7 @@ def aaNt_seqsAligned(accession):
     aa_seq[string] and function coding_region (see above) with corresponding input from 
     the DBlayer, and returns a tuple of nt triplet and corresponding aa letter & corresponding accession_id
     """		
-	return bl.aa_nt(accession)
+    return bl.aa_nt(accession)
 
 def entryCodon_freq():
     """
