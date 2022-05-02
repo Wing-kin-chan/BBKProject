@@ -19,14 +19,20 @@ html    = htmlutils.header()
 
 html += "<h1>List of all entries</h1>\n"
 html += "  <table>\n"
+html += "   <tr>"
+html += "    <th>Accession</th>"
+html += "    <th>GeneID</th>"
+html += "    <th>Protein Product</th>"
+html += "    <th>Locus</th>"
+html += "   </tr>"
 
 for entry in entries:
     html += "    <tr><td>"
-    html += "<a href='" + config.searchurl + "?ac=" + entry['Accession'] + "'>"         #Added keys to call specific data from the
-    html += "<a href='" + config.searchurl + "?gi=" + entry['GeneID'] + "'>"            #entry object which is a dictionary          
-    html += "<a href='" + config.searchurl + "?protein=" + entry['Product'] + "'>"
-    html += "<a href='" + config.searchurl + "?loc=" + entry['Locus'] + "'>"
-    html += "</td></tr>\n"
+    html += "<td><a href='" + config.searchurl + "?ac=" + entry['Accession'] + "'>" + entry['Accession'] + "</a></td>"         #Added keys to call specific data from the
+    html += "<td><a href='" + config.searchurl + "?gi=" + entry['GeneID'] + "'>" + entry['GeneID'] + "</a></td>"            #entry object which is a dictionary          
+    html += "<td><a href='" + config.searchurl + "?protein=" + entry['Product'] + "'>" + entry['Product'] + "</a></td>"
+    html += "<td><a href='" + config.searchurl + "?loc=" + entry['Locus'] + "'>" + entry['Locus'] + "</a></td>"
+    html += "</tr>\n"
 
     
 html += "  </table>\n"
