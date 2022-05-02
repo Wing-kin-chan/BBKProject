@@ -5,9 +5,10 @@ File:       sub_bl.py
 
 Version:    V1.0
 Date:       01.05.22
-Function:   Obtain data stored in the database (DB) layer by calling the DB API
-            functions and use the data in the functions to modify and calculate
-            data to return for various tasks and searches for the FE
+Function:   This is a sub code to obtain data stored in the database (DB)
+            layer by calling the DB API functions and use the data in the
+            functions to modify and calculate data to return a saved static
+            files for various tasks for the BL
 
 Copyright:  (c) Tiina Talts, MSc Student, Birkbeck UL, 2022
 Author:     Tiina Talts
@@ -17,16 +18,16 @@ Address:    Institute of Structural and Molecular Biology
 --------------------------------------------------------------------------
 Description:
 ============
-Obtain data stored in the database (DB) layer by calling the DB API
-functions and use the data in the functions to modify and calculate
-data to return for various tasks and searches for the FE.
+This is a sub code to obtain data stored in the database (DB)
+layer by calling the DB API functions and use the data in the
+functions to modify and calculate data to return a saved static
+files for various tasks for the BL
 The various tasks that the code performs include:
--- return the complete DNA sequence with the coding regions specified
--- return the amino acid sequence with the coding DNA sequence
--- return codon usage frequencies within the coding region
+-- return the coding regions for DNA sequences in the database
+   and save as a static file in the /bl directory
 -- return the overall codon usage within the chromoseme 10
--- return sticky-end restriction enzyme sites in the genomic DNA - i.e. in
-   both coding and non-coding regions
+   and save as a static file in the /bl directory
+
 
 --------------------------------------------------------------------------
 Revision History:
@@ -53,12 +54,14 @@ from collections import defaultdict
 
 def getAllCodingRegions():
     """
-    For returning all the coding regions within the database of eligible entries from the human chromoseme 10.
+    For returning all the coding regions within the database of eligible
+    entries from the human chromoseme 10.
 
-    Input:  result       --- The result returned by dbapi getAllCodingRegions function and
-                         by businesslayer coding_region function
-    Return: (final_list) --- A list containing the extracted coding region and its respective accession identifier
-                         for all entries in the database
+    Input:  result       --- The result returned by dbapi getAllCodingRegions
+                         function and by businesslayer coding_region function
+    Return: (final_list) --- A list containing the extracted coding region
+                         and its respective accession identifier for all
+                         entries in the database
 
     01.05.22  Original   By: TT
     """
@@ -81,12 +84,15 @@ def getAllCodingRegions():
 
 def codonFreq_chromosome10():
     """
-    For returning the codon usage frequencies for all the eligible entries from the human chromoseme 10.
+    For returning the codon usage frequencies for all the eligible entries
+    from the human chromoseme 10.
 
-    Input:  result       --- The result returned by dbapi getAllCodingRegions function and
-                         by businesslayer aa_nt function
-    Return: (zipped3)    --- A list containing the unique codons for all the extracted coding regions
-                         and its respective frequency value for all eligible entries in the human chromosome 10 database
+    Input:  result       --- The result returned by dbapi getAllCodingRegions
+                         function and by businesslayer aa_nt function
+    Return: (zipped3)    --- A list containing the unique codons for all the
+                         extracted coding regions and its respective frequency
+                         value for all eligible entries in the human
+                         chromosome 10 database
 
     01.05.22  Original   By: TT
     """
@@ -123,6 +129,22 @@ def codonFreq_chromosome10():
 
 def writeFile_overallcodonfreqs():
     """
+    For creating file overallcodonfreqs.txt that is saved in the /bl directory.
+
+    Function can be run from the command line with command
+    'python sub_bl.py writeFile_overallcodonfreqs'
+    
+    Input:  result                  --- no input from command line needed -
+                                    uses function codonFreq_chromosome10
+                                    which in turn uses database function
+                                    getAllCodingRegions
+    Return: (overallcodonfreqs.txt) --- A text file containing the codon
+                                    frequencies for all the extracted coding
+                                    regions and its respective frequency value
+                                    for all eligible entries in the human
+                                    chromosome10 database
+
+    01.05.22  Original   By: TT
     """
     from sub_bl import codonFreq_chromosome10
     
@@ -138,6 +160,20 @@ def writeFile_overallcodonfreqs():
 
 def writeFile_getallcodingregions():
     """
+    For creating file getallcodingregions.txt that is saved in the /bl directory.
+
+    Function can be run from the command line with command
+    'python sub_bl.py writeFile_getallcodingregions'
+    
+    Input:  result                    --- no input from command line needed -
+                                      uses function getAllCodingRegions
+                                      which in turn uses database function
+                                      getAllCodingRegions
+    Return: (getallcodingregions.txt) --- A text file containing the coding
+                                      regions for all the eligible entries in
+                                      the human chromosome10 database
+
+    01.05.22  Original   By: TT
     """
     from sub_bl import getAllCodingRegions
     
