@@ -5,9 +5,10 @@ File:       businesslayer.py
 
 Version:    V1.0
 Date:       01.05.22
-Function:   Obtain data stored in the database (DB) layer by calling the DB API
-            functions and use the data in the functions to modify and calculate
-            data to return for various tasks and searches for the FE
+Function:   Obtain data stored in the database (DB) layer by calling the
+            DB API functions and use the data in the functions to modify
+            and calculate data to return for various tasks and searches
+            for the FE
 
 Copyright:  (c) Tiina Talts, MSc Student, Birkbeck UL, 2022
 Author:     Tiina Talts
@@ -60,11 +61,15 @@ def coding_region(accession):
     """
     For highlighting and extracting the coding region per entry.
 
-    Input:  result       --- The result returned by dbapi getAccession function
-    Return: (coding_highlighted, extractedCoding_region, accession, complement, d_coding)
-                         --- A list containing the 'highlighted' coding region (boundaries marked
-                         by {} wirthing the original DNA sequence), extracted coding region,
-                         its respective accession identifier, complement 'Y/N', and dictionary of coding boundaries
+    Input:  result       --- The result returned by dbapi getAccession
+                         function
+    Return: (coding_highlighted, extractedCoding_region, accession,
+                         complement, d_coding)
+                         --- A list containing the 'highlighted' coding
+                         region (boundaries marked by {} within the original
+                         DNA sequence), extracted coding region, its
+                         respective accession identifier, complement 'Y/N',
+                         and dictionary of coding boundaries
 
     01.05.22  Original   By: TT
     """
@@ -138,12 +143,15 @@ def coding_region(accession):
 
 def aa_nt(accession):
     """
-    For returning the amino acid sequence with the coding nucleotide or codon sequence.
+    For returning the amino acid sequence with the coding nucleotide or
+    codon sequence.
 
-    Input:  result       --- The result returned by dbapi getAccession function
+    Input:  result       --- The result returned by dbapi getAccession
+                         function
     Return: (zipped, nt_triplets, accession)
-                         --- A list containing the nucleotide codon and amino acid letter as a tuple,
-                         nucleotide codon and its respective accession identifier
+                         --- A list containing the nucleotide codon and
+                         amino acid letter as a tuple, nucleotide codon
+                         and its respective accession identifier
 
     01.05.22  Original   By: TT
     """
@@ -177,14 +185,17 @@ def aa_nt(accession):
 
 def enz_table(accession):
     """
-    For returning the return sticky-end restriction enzyme sites in the genomic DNA - i.e. in
-    both coding and non-coding regions.
+    For returning the return sticky-end restriction enzyme sites in the
+    genomic DNA - i.e. in both coding and non-coding regions.
 
-    Input:  result       --- The result returned by businesslayer coding_region that in turn takes result from
+    Input:  result       --- The result returned by businesslayer
+                         coding_region that in turn takes result from
                          dbapi getAccession function
     Return: (table_dic, 'List of noncutters: ', freq0, accession)
-                         --- A list containing the restricion enzyme cutting information as a dictionary,
-                         a list of non-cutting enzymes and its respective accession identifier
+                         --- A list containing the restricion enzyme
+                         cutting information as a dictionary, a list of
+                         non-cutting enzymes and its respective accession
+                         identifier
 
     01.05.22  Original   By: TT
     """
@@ -233,11 +244,13 @@ def enz_table(accession):
     pattern = ''
     freq = 0
     badcutterlist = 0
-    #Creates a pattern for each enzyme using its cutting sequence and performes a regular
-    #expression search for each pattern in the given entry sequence;
-    #takes into account degenerate bases in the enzyme cutting sequence
-    #NOTE: not all degenerate patterns are entered into the code but only the ones
-    #that feature in the enzyme list given in the enzyme file - if enzymes added into the file, the code here
+    #Creates a pattern for each enzyme using its cutting sequence and
+    #performes a regular expression search for each pattern in the
+    #given entry sequence;  takes into account degenerate bases in
+    #the enzyme cutting sequence
+    #NOTE: not all degenerate patterns are entered into the code
+    #but only the ones that feature in the enzyme list given in
+    #the enzyme file - if enzymes added into the file, the code here
     #needs revisiting and any additional degeneracies added!:
     for k, v in table_dic.items():
         for nucleotide in v[1]:
@@ -266,7 +279,8 @@ def enz_table(accession):
         if freq == 0:
             freq0.append(k)
         #If bad cutter list is zero and frequency is not
-        #equal to zero means this is a good enzyme that cuts outside of the coding region:
+        #equal to zero means this is a good enzyme that cuts outside
+        #of the coding region:
         if badcutterlist == 0:
             if freq != 0:
                 table_dic[k].append('This is a good enzyme!')
@@ -276,85 +290,20 @@ def enz_table(accession):
     return table_dic, 'List of noncutters: ', freq0, accession
 
 
-def getAllCodingRegions():
-    """
-    For returning all the coding regions within the database of eligible entries from the human chromoseme 10.
-
-    Input:  result       --- The result returned by dbapi getAllCodingRegions function and
-                         by businesslayer coding_region function
-    Return: (final_list) --- A list containing the extracted coding region and its respective accession identifier
-                         for all entries in the database
-
-    01.05.22  Original   By: TT
-    """
-    from businesslayer import coding_region
-
-    db_out = {}
-    final_list = []
-    source = db.getAllCodingRegions()
-    for entry in source:
-        db_out.update(entry)
-
-        for k, v in db_out.items():
-            if k == 'Accession':
-                accession_id = str(v).strip('\'')
-                return_result = bl.coding_region(accession_id)
-                final_list.append(return_result[1:3])
-                   
-    return final_list
-
-
-def codonFreq_chromosome10():
-    """
-    For returning the codon usage frequencies for all the eligible entries from the human chromoseme 10.
-
-    Input:  result       --- The result returned by dbapi getAllCodingRegions function and
-                         by businesslayer aa_nt function
-    Return: (zipped3)    --- A list containing the unique codons for all the extracted coding regions
-                         and its respective frequency value for all eligible entries in the human chromosome 10 database
-
-    01.05.22  Original   By: TT
-    """
-    from businesslayer import aa_nt
-
-    db_out = {}
-    d = defaultdict(int)
-    all_triplets = []
-    allFreq_values = []
-    unique_triplets = []
-    source = db.getAllCodingRegions()
-    for entry in source:
-        db_out.update(entry)
-
-        for k, v in db_out.items():
-            if k == 'Accession':
-                accession_id = str(v).strip('\'')
-                return_result = bl.aa_nt(accession_id)
-                coding_triplets = return_result[1]
-                for codon in coding_triplets:
-                    codon_u = codon.replace('T', 'U')
-                    all_triplets.append(codon_u)
-    for i in all_triplets:
-        d[i] += 1
-    length_alltriplets = len(all_triplets)
-    for k, v in d.items():
-        unique_triplets.append(k)
-        allfreq_value = str(round((v/length_alltriplets)*100, 3))
-        allFreq_values.append(allfreq_value)
-        
-    zipped3 = list(zip(unique_triplets, allFreq_values))
-                   
-    return zipped3
-
 def codonFreq_entry(accession):
     """
     For returning the codon usage frequencies for a particular entry.
 
-    Input:  result                      --- The result returned by businesslayer aa_nt function and saved file with
-                                        previously obtained data of all the codon frequencies of human chromosome 10
-    Return: (d_entryFreq, accession)    --- A dictionary containing the unique codons for the entry coding region, its
-                                        respective amino acid one letter code, codon usage frequency value per entry,
-                                        codon usage frequency value per chromosome; and respective accession identifier for the entry 
+    Input:  result                      --- The result returned by businesslayer
+                                        aa_nt function and saved file with
+                                        previously obtained data of all the codon
+                                        frequencies of human chromosome 10
+    Return: (d_entryFreq, accession)    --- A dictionary containing the unique
+                                        codons for the entry coding region, its
+                                        respective amino acid one letter code,
+                                        codon usage frequency value per entry,
+                                        codon usage frequency value per chromosome;
+                                        and respective accession identifier for the entry 
 
     01.05.22  Original   By: TT
     """
