@@ -23,7 +23,7 @@ GenbankAccession = form.getvalue('ac')
 GeneIdentifier = form.getvalue('gi')
 ProteinProduct = form.getvalue('protein')
 ChromosomalLocation = form.getvalue('loc')
-Resultslen = form.getvalue('len')
+Resultslen = 100
 SearchBy = ''
 
 if GenbankAccession:
