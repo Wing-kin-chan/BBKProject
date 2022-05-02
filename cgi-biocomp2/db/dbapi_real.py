@@ -30,10 +30,10 @@ Description:
                             one result, calls getAccession.
     -getByGeneID:           Returns a list of summaries of all entries whose GeneID is like the query. If the search returns
                             one result, calls getAccession.
-    -getByLocus:            Returns a list of summaries of all entries whose locus is like the query. If the search returns
-                            one result, calls getAccession.
     -getByProduct:          Returns a list of summaries of all entries whose protein name is like the query. If the search returns
                             one result, calls getAccession.
+    -getByLocus:            Returns a list of summaries of all entries whose locus is like the query. If the search returns
+                            one result, calls getAccession.                        
     -updateCodingSeq:       Updates the genomic coding sequence string with introns removed of the entry, with a value calculated by 
                             the business layer API.
     -updateComplement:      Updates the complementary/antisense string of the sequence of the entry, with a value calculated by
