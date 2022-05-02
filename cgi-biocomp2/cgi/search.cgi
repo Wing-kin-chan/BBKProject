@@ -47,7 +47,7 @@ html = htmlutils.header()
 
 if type(results) == list:
     html += "<head>"
-    html += "<title>Searching By " + SearchBy + ":" + query + "</title>"
+    html += "<h1>Searching By " + SearchBy + ":" + query + "</h1>"
     html += "</head>"
     html += "  <table>\n"
     html += "   <tr>"
