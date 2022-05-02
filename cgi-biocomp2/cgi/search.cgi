@@ -45,9 +45,13 @@ if ChromosomalLocation:
 
 html = htmlutils.header()
 
+if results == 'No results found':
+    html += "<h1>" + results + "for: " + query + "</h1>"
+    html += htmlutils.footer()
+    
 if type(results) == list:
     html += "<head>"
-    html += "<h1>Searching By " + SearchBy + ":" + query + "</h1>"
+    html += "<h1>Searching By " + SearchBy + ": " + query + "</h1>"
     html += "</head>"
     html += "  <table>\n"
     html += "   <tr>"
