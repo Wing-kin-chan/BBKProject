@@ -27,7 +27,7 @@ html += "    <th>Locus</th>"
 html += "   </tr>"
 
 for entry in entries:
-    html += "    <tr><td>"
+    html += "<tr>"
     html += "<td><a href='" + config.searchurl + "?ac=" + entry['Accession'] + "'>" + entry['Accession'] + "</a></td>"         #Added keys to call specific data from the
     html += "<td><a href='" + config.searchurl + "?gi=" + entry['GeneID'] + "'>" + entry['GeneID'] + "</a></td>"            #entry object which is a dictionary          
     html += "<td><a href='" + config.searchurl + "?protein=" + entry['Product'] + "'>" + entry['Product'] + "</a></td>"
