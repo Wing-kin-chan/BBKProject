@@ -47,10 +47,8 @@ import businesslayer as bl
 
 def getAllEntries():
     """
-    ...Function comment header goes here...
-
-    This is a very simple function that just calls the database API to do the SQL to 
-    obtain the full list of entries. It doesn't need to do anything else.
+    This is a function that calls the database API to do the SQL to 
+    obtain the full list of entries.
     """
     return(dbapi.getAllEntries())
 
@@ -110,14 +108,15 @@ def aaNt_seqsAligned(accession):
     """
     Function that will interact with a Blayer function aa_nt that takes accession_id, 
     aa_seq[string] and function coding_region (see above) with corresponding input from 
-    the DBlayer, and returns a tuple of nt triplet and corresponding aa letter & corresponding accession_id
+    the DBlayer, and returns a list of tuples of nt triplet and corresponding aa letter;
+    & corresponding accession_id
     """		
     return bl.aa_nt(accession)
 
 def entryCodon_freq():
     """
     Function that will interact with a Blayer function codonFreq_entry that takes accession_id, 
-    extract data needed from a function aa_nt and saved file with adta derived previously from function
+    extract data needed from a function aa_nt and saved .txt file with data derived previously from function
     codonFreq_chromosome10 and returns a list of codons for the entry, frequencies per codon per entry
     as float (%), frequencies per codon per chromosome as float (%), corresponding amino acid 
     letter code; & corresponding accession_id for the entry
@@ -128,7 +127,7 @@ def chrom10Codon_freq():
     """
     Function that will interact with a Blayer function codonFreq_chromosome10 that takes all 
     available chromosome10 accession_id's in the DB using getAllCodingRegions, extract data needed from a 
-    function aa_nt (see above) and returns a list of tuples: codon, freq per codon per all entries as float (%)
+    function aa_nt and returns a list of tuples: codon, freq per codon per all entries as float (%)
      - can be completed once and saved as static values in a file: overallcodonfreqs.txt
     """
     return bl.codonFreq_chromosome10()
