@@ -69,36 +69,48 @@ biocomp2/                    (Top directory)
 CODE STRUCTURE OR CALL TREE:
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  BLAPI:        |                    BL code:                       |       DBAPI:
+                |                                                   | 
+getAllEntries --+---------------------------------------------------+-- getAllEntries
+                |                                                   |
+                |                                                   |
+getByGeneID ----+---------------------------------------------------+-- getByGeneID
+                |                                                   |
+                |                                                   |
+getByProtein ---+---------------------------------------------------+-- getByProduct
+                |                                                   |
+                |                                                   |
+getAccession ---+---------------------------------------------------+-- getAccession
+                |                                          +--------+--/
+                |                                          |        |
+getByAccession -+------------------------------------------+--------+-- getByAccession
+                |                                          |        |
+                |                                          |        |
+getByLocus -----+------------------------------------------+--------+-- getByLocus
+                |                                          |        |
+                |                                          |        |
+ntCoding_region +----------------- coding_region ----------+        |
+                |                      |         \         |        |
+                |                      |          \        |        |
+aaNt_seqsAligned+------------------ aa_nt ---------+-------+        |
+                |                      |  \_____   |                |
+                |                      |        \  |                |
+entryCodon_freq +-------------- codonFreq_entry  | |                |
+                |                         /      | |                |
+                |'overallcodonfreqs.txt'_/       | |                |
+                |               \               /  |                |
+                |      sub.codonFreq_chromosome10 -+----------------+-- getAllCodingRegions
+                |                                  |               _|__/
+                |                                  |              / | 
+                |                                  |              | | 
+restr_enz ------+----------------- enz_table ------+              | | 
+                |                       \__ 'NEB_HF_restr_enz.txt'| | 
+                |                                                 | | 
+                |                                                 | | 
+                |                                                 | | 
+                |               sub.getAllCodingRegions ---------/  |
+                |                      \                            |
+                |                       \_ 'getallcodingregions.txt'+-- updateCodingSeq
 
 
 
