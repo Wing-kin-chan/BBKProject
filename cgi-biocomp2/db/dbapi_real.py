@@ -242,7 +242,7 @@ def updateComplement(Accession: str, Complement: str):
     Function that stores the complement coding sequences as calculated by the business layer API, in the database
     '''
     cursor = connection.cursor()
-    sql_updateComp = '''UPDATE genes SET Complement = '{}' WHERE Accession = '{}'; '''.format(Complement, Accession)
+    sql_updateComp = '''UPDATE genes SET Complement_seq = '{}' WHERE Accession = '{}'; '''.format(Complement, Accession)
     cursor.execute(sql_updateComp)
     connection.commit()
     cursor.close()
