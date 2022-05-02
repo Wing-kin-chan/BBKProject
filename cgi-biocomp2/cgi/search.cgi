@@ -26,7 +26,7 @@ ChromosomalLocation = form.getvalue('loc')
 
 #result = blapi_real.search
 
-html    = "htmlutils.header()"
+html = htmlutils.header()
 html += "<head>"
 html += "<title>Search Results</title>"
 html += "</head>"
@@ -53,9 +53,10 @@ html += "<td>"
 html += "<td>"
 html += "<td>"
 html += "<td></TABLE>"
-html += "htmlutils.footer()"
+html += htmlutils.footer()
 
 print(html)
+
 
 
 
