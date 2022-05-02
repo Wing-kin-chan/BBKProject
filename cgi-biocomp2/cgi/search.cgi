@@ -23,37 +23,76 @@ GenbankAccession = form.getvalue('ac')
 GeneIdentifier = form.getvalue('gi')
 ProteinProduct = form.getvalue('protein')
 ChromosomalLocation = form.getvalue('loc')
+Resultslen = form.getvalue('len')
+SearchBy = ''
 
-#result = blapi_real.search
+if GenbankAccession:
+    query = GenbankAccession
+    results = blapi.getByAccession(GenbankAccession, Resultslen)
+    SearchBy = 'Accession'
+if GeneIdentifier:
+    query = GeneIdentifier
+    results = blapi.getByGeneID(GeneIdentifier, Resultslen)
+    SearchBy = 'GeneID'
+if ProteinProduct:
+    query = ProteinProduct
+    results = blapi.getByProtein(ProteinProduct, Resultslen)
+    SearchBy = 'Gene Product'
+if ChromosomalLocation:
+    query = ChromosomalLocation
+    results = blapi.getByLocus(ChromosomalLocation, Resultslen)
+    SearchBy = 'Locus'
 
 html = htmlutils.header()
-html += "<head>"
-html += "<title>Search Results</title>"
-html += "</head>"
-html += "<p /><b>Name: </b><p />"
-html += "<b>Conformation: </b><p />"
-html += "<b>Overhang: </b><p />"
-html += "<b>Minimum Site Length: </b><p />"
-html += "<b>Maximum Number of Cuts: </b><p />"
-html += "<b>Included: </b><p />"
-html += "<b>Noncutters: </b><p />"
-html += "<table>"
-html += "<thead align = 'center'>"
-html += "<tr>"
-html += "<th>Name"
-html += "<th>Sequence"
-html += "<th>Site Length"
-html += "<th>Overhang"
-html += "<th>Frequency"
-html += "<th>Cut Positions"
-html += "<tbody align = 'center'><TR align = 'center'>"
-html += "<td>"
-html += "<td>"
-html += "<td>"
-html += "<td>"
-html += "<td>"
-html += "<td></TABLE>"
-html += htmlutils.footer()
+
+if type(results) == list:
+    html += "<head>"
+    html += "<title>Searching By " + SearchBy + ":" + query + "</title>"
+    html += "</head>"
+    html += "  <table>\n"
+    html += "   <tr>"
+    html += "    <th>Accession</th>"
+    html += "    <th>GeneID</th>"
+    html += "    <th>Protein Product</th>"
+    html += "    <th>Locus</th>"
+    html += "   </tr>"
+    
+    for entry in results:
+        html += "<tr>"
+        html += "<td><a href='" + config.searchurl + "?ac=" + entry['Accession'] + "'>" + entry['Accession'] + "</a></td>"         
+        html += "<td><a href='" + config.searchurl + "?gi=" + entry['GeneID'] + "'>" + entry['GeneID'] + "</a></td>"            
+        html += "<td><a href='" + config.searchurl + "?protein=" + entry['Product'] + "'>" + entry['Product'] + "</a></td>"
+        html += "<td><a href='" + config.searchurl + "?loc=" + entry['Locus'] + "'>" + entry['Locus'] + "</a></td>"
+        html += "</tr>\n"
+
+if type(results) == dict:
+    html += "<head>"
+    html += "<title>" + results['Accession'] + "</title>"
+    html += "</head>"
+    html += "<p /><b>Name:" + results['Product'] + "</b><p />"
+    html += "<b>Conformation: </b><p />"
+    html += "<b>Overhang: </b><p />"
+    html += "<b>Minimum Site Length: </b><p />"
+    html += "<b>Maximum Number of Cuts: </b><p />"
+    html += "<b>Included: </b><p />"
+    html += "<b>Noncutters: </b><p />"
+    html += "<table>"
+    html += "<thead align = 'center'>"
+    html += "<tr>"
+    html += "<th>Name"
+    html += "<th>Sequence"
+    html += "<th>Site Length"
+    html += "<th>Overhang"
+    html += "<th>Frequency"
+    html += "<th>Cut Positions"
+    html += "<tbody align = 'center'><TR align = 'center'>"
+    html += "<td>"
+    html += "<td>"
+    html += "<td>"
+    html += "<td>"
+    html += "<td>"
+    html += "<td></TABLE>"
+    html += htmlutils.footer()
 
 print(html)
 
