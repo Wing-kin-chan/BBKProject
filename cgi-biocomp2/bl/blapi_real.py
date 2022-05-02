@@ -9,7 +9,7 @@ Function:   This is the business logic API to obtain modified and
             calculated data from the businesslayer (BL) by calling the BL
             functions and return for various tasks and searches for the FE
 
-Copyright:  (c) Tiina Talts, MSc Student, Birkbeck UL, 2022
+Copyright:  (c) Tiina Talts, Bioinformatics MSc Student, Birkbeck UoL, 2022
 Author:     Tiina Talts
 Address:    Institute of Structural and Molecular Biology
             Birkbeck University of London
