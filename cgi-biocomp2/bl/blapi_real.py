@@ -60,7 +60,6 @@ def getByGeneID(query: str, resultslen: int):
     """
     return dbapi.getByGeneID(query, resultslen)
 
-
 def getByProtein(query: str, resultslen: int):
     """
     Function that will pass prot product name (in the chromosome file as '/product=') 
@@ -103,7 +102,6 @@ def ntCoding_region(accession):
     """
     return bl.coding_region(accession)
 
-
 def aaNt_seqsAligned(accession):
     """
     Function that will interact with a Blayer function aa_nt that takes accession_id, 
@@ -123,15 +121,6 @@ def entryCodon_freq():
     """
     return bl.codonFreq_entry(accession)
 
-def chrom10Codon_freq():
-    """
-    Function that will interact with a Blayer function codonFreq_chromosome10 that takes all 
-    available chromosome10 accession_id's in the DB using getAllCodingRegions, extract data needed from a 
-    function aa_nt and returns a list of tuples: codon, freq per codon per all entries as float (%)
-     - can be completed once and saved as static values in a file: overallcodonfreqs.txt
-    """
-    return bl.codonFreq_chromosome10()
-
 def restr_enz(accession):
     """
     Function that will interact with Blayer functions that return a dictionary of list of restriction
@@ -144,4 +133,3 @@ def restr_enz(accession):
     enzymes that includes EcoRI, BamHI and BsuMI as XhoI its prototype.   
     """
     return bl.enz_table(accession)
-
