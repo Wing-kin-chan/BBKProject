@@ -86,7 +86,7 @@ if type(results) == dict:
     html += "</div>"
     html += "<div class='sequence'>"
     html += "<h2>Sequence:</h2>"
-    html += "<p /><b>" + results['Sequence'] + "</b><p />"
+    html += "<p /><b>" + results['Sequence'].decode('UTF-8') + "</b><p />"
     html += "</div>"
     html += "<b>Conformation: </b><p />"
     html += "<b>Overhang: </b><p />"
