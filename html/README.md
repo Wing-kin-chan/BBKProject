@@ -38,10 +38,4 @@ Once you hit search the results are displayed giving the Protein Product Name, t
 
 ![image](https://user-images.githubusercontent.com/100699953/166475796-2bdc42a9-aa9d-4cc4-80e4-d35a67766f67.png)
 
-
-## Semantic Markers
-
-h1 - used to identify the most important header
-
-
 Author: Anthonia 
