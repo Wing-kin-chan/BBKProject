@@ -56,7 +56,13 @@ p {
       border: none;
       margin: 0pt;
       padding: 0pt;
+      max-width: 800px;
      }
+p.ow {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: none;
+}
 .content {padding: 1em;}
 
 /*footer*/
