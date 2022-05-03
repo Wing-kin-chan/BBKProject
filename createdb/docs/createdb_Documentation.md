@@ -15,3 +15,5 @@ The database uses a single table with accession numbers as the primary key for r
     - Coding_seq LONGBLOB
     - Coding_regions BLOB NOT NULL
     - Complement ENUM('Y', 'N') NOT NULL
+    
+To parse the GenBank file and store into a database, simply run createdb.py in Pandora's Python console.
