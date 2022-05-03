@@ -71,9 +71,14 @@ if type(results) == list:
 
 if type(results) == dict:
     html += "<head>"
-    html += "<title>" + results['Accession'] + "</title>"
+    html += "<title>" + results['Product'] + "</title>"
     html += "</head>"
-    html += "<p /><b>Name:" + results['Product'] + "</b><p />"
+    html += "<h1>" + results['Product'] + "</h1>"
+    html += "<div class='summary'>"
+    html += "<p /><b>Accession: " + results['Accession'] + "</b><p />"
+    html += "<p /><b>GeneID: " + results['GeneID'] + "</b><p />"
+    html += "<p/><b>Locus: " + results['Locus'] + "</b><p />"
+    html += "</div>"
     html += "<b>Conformation: </b><p />"
     html += "<b>Overhang: </b><p />"
     html += "<b>Minimum Site Length: </b><p />"
