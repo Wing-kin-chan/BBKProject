@@ -27,16 +27,9 @@ print(
 <header>
 <ul class="topnav">
 <li><a href="index.html">Homepage</a></li>
-<li><a href="geneoftheday.html">Gene of the Day</a></li>
-<li><a href="feelinglucky.html">'I'm Feeling Lucky!'</a></li>
 </ul>
 </header>
 
-      <h1>Biocomputing II - framework</h1>
-      <p>A simple demo of how the Biocomputing II project should work and
-        be submitted. It shows how the API between the layers is organized.</p>
-
-      <p>
         <a href='""" + config.listallurl + """'>List all entries</a>
       </p>
       
