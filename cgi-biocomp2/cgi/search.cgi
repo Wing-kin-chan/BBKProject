@@ -45,7 +45,7 @@ if ChromosomalLocation:
     SearchBy = 'Locus'
 
 highlighted_CDS_source = businesslayer.coding_region(results['Accession'])[0]
-highlighted_CDS = highlighted_CDS_source.replace('{', '<span style="background-color: #FFFF00>').replace('}', '</span>')
+highlighted_CDS = highlighted_CDS_source.replace('{', '<span style="background-color: #FFFF00">').replace('}', '</span>')
 
 html = htmlutils.header()
 
