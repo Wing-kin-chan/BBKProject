@@ -14,6 +14,7 @@ sys.path.insert(0, "../")
 import cgi        # Import the CGI module
 
 import blapi      # Import the Business Logic API
+import businesslayer #Import businesslayer API
 import htmlutils  # Import HTML utilities
 import config     # Import configuration information (e.g. URLs)
 cgitb.enable()
@@ -43,7 +44,7 @@ if ChromosomalLocation:
     results = blapi.getByLocus(ChromosomalLocation, Resultslen)
     SearchBy = 'Locus'
 
-highlighted_CDS_source = blapi.coding_region(results['Accession'])
+highlighted_CDS_source = businesslayer.coding_region(results['Accession'])
 highlighted_CDS = highlighted_CDS_source.replace('{', '<span style="background-color: #FFFF00>'.replace('}', '</span>'))
 
 html = htmlutils.header()
