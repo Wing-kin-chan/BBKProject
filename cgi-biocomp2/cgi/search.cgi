@@ -44,9 +44,6 @@ if ChromosomalLocation:
     results = blapi.getByLocus(ChromosomalLocation, Resultslen)
     SearchBy = 'Locus'
 
-highlighted_CDS_source = businesslayer.coding_region(results['Accession'])[0]
-highlighted_CDS = highlighted_CDS_source.replace('{', '<span style="background-color: #FFFF00">').replace('}', '</span>')
-
 html = htmlutils.header()
 
 if results == 'No results found':
@@ -74,6 +71,8 @@ if type(results) == list:
         html += "</tr>\n"
 
 if type(results) == dict:
+    highlighted_CDS_source = businesslayer.coding_region(results['Accession'])[0]
+    highlighted_CDS = highlighted_CDS_source.replace('{', '<span style="background-color: #FFFF00">').replace('}', '</span>')
     html += "<head>"
     html += "<title>" + results['Product'] + "</title>"
     html += "</head>"
