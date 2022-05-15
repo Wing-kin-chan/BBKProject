@@ -14,7 +14,8 @@ if [ ! -f config.sh ]; then
     echo ""
 fi
 
-if [ ! -f cgi-biocomp2/config.py ]; then
+# Edited by Kyan Koranteng to refer to the config script for the alternate front end
+if [ ! -f cgi-biocomp2/config_afe.py ]; then
     echo ""
     echo "You need to create a cgi-biocomp2/config.py file"
     echo "Tip: copy and edit the appropriate example file - "
@@ -25,7 +26,7 @@ if [ ! -f cgi-biocomp2/config.py ]; then
     echo ""
 fi
 
-if [ ! -f config.sh ] || [ ! -f cgi-biocomp2/config.py ]; then
+if [ ! -f config.sh ] || [ ! -f cgi-biocomp2/config_afe.py ]; then
     exit 0;
 fi
 
